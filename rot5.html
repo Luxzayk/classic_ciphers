@@ -1,110 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROT-5 | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROT-5 | CriptoSuite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
+
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">ROT-5</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
-  </div>
-</nav>
-
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow">Variante numérica del César — cifrado de dígitos 0–9</p>
-  <h1 class="cipher-title">Cifrado ROT-5</h1>
-  <p class="cipher-desc">ROT-5 aplica una rotación fija de 5 posiciones sobre los dígitos del 0 al 9 exclusivamente. Las letras y símbolos no se modifican. Operación involutiva: cifrar dos veces devuelve el original. Fórmula: <span class='theory-formula'>C = (D + 5) mod 10</span></p>
-</div>
-
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
-
-    <!-- LEFT: PARAMS -->
-    <div class="workspace-panel">
-      <div class="panel-header copper">Parámetros</div>
-      <div style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
-        <div>
-          <label class="field-label">Rotación Fija</label>
-          <div class="value-display">5 Posiciones</div>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">ROT-5</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
         </div>
-        <div>
-          <label class="field-label">Caracteres Soportados</label>
-          <div class="value-display">Sólo dígitos (0-9)</div>
-        </div>
-      </div>
-      
-      <details class="theory-details">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">
-          ROT-5 es la contraparte numérica de ROT-13. Solo actúa sobre los caracteres '0'–'9'. Las letras pasan sin cambios, lo que lo hace útil para mezclar texto alfanumérico sin alterar la legibilidad del componente alfabético.
-        </div>
-      </details>
+    </nav>
+
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow">Variante numérica del César — cifrado de dígitos 0–9</p>
+        <h1 class="cipher-title">Cifrado ROT-5</h1>
+        <p class="cipher-desc">ROT-5 aplica una rotación fija de 5 posiciones sobre los dígitos del 0 al 9 exclusivamente. Las letras y símbolos no se modifican. Operación involutiva: cifrar dos veces devuelve el original. Fórmula: <span class='theory-formula'>C = (D + 5) mod 10</span></p>
     </div>
 
-    <!-- CENTER: VISUALIZER -->
-    <div class="workspace-panel">
-      <div class="panel-header copper">Mapeo de Dígitos</div>
-      <div style="padding:1rem; display:flex; flex-direction:column; gap:1.5rem; justify-content:center; height:100%;">
-        <div>
-          <label class="field-label" style="margin-bottom:0.5rem; display:block;">Dígito Original</label>
-          <div id="alfabetoBaseDisplay" class="value-display" style="text-align:center; font-family:var(--font-mono); letter-spacing:0.3em; padding:0.75rem;">0123456789</div>
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
+
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header copper">Parámetros</div>
+                <div style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
+                    <div>
+                        <label class="field-label">Rotación Fija</label>
+                        <div class="value-display">5 Posiciones</div>
+                    </div>
+                    <div>
+                        <label class="field-label">Caracteres Soportados</label>
+                        <div class="value-display">Sólo dígitos (0-9)</div>
+                    </div>
+                </div>
+
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        ROT-5 es la contraparte numérica de ROT-13. Solo actúa sobre los caracteres '0'–'9'. Las letras pasan sin cambios, lo que lo hace útil para mezclar texto alfanumérico sin alterar la legibilidad del componente alfabético.
+                    </div>
+                </details>
+            </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div class="workspace-panel">
+                <div class="panel-header copper">Mapeo de Dígitos</div>
+                <div style="padding:1rem; display:flex; flex-direction:column; gap:1.5rem; justify-content:center; height:100%;">
+                    <div>
+                        <label class="field-label" style="margin-bottom:0.5rem; display:block;">Dígito Original</label>
+                        <div id="alfabetoBaseDisplay" class="value-display" style="text-align:center; font-family:var(--font-mono); letter-spacing:0.3em; padding:0.75rem;">0123456789</div>
+                    </div>
+                    <div style="text-align:center; color:var(--copper); opacity:0.8;">↓</div>
+                    <div>
+                        <label class="field-label" style="margin-bottom:0.5rem; display:block; color:var(--copper);">Dígito Cifrado</label>
+                        <div id="alfabetoCifradoDisplay" class="value-display" style="text-align:center; font-family:var(--font-mono); letter-spacing:0.3em; padding:0.75rem; border-color:var(--copper); color:var(--copper);">5678901234</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe números para procesar... Ej: 2026"></textarea>
+                </div>
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header copper">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-        <div style="text-align:center; color:var(--copper); opacity:0.8;">↓</div>
-        <div>
-          <label class="field-label" style="margin-bottom:0.5rem; display:block; color:var(--copper);">Dígito Cifrado</label>
-          <div id="alfabetoCifradoDisplay" class="value-display" style="text-align:center; font-family:var(--font-mono); letter-spacing:0.3em; padding:0.75rem; border-color:var(--copper); color:var(--copper);">5678901234</div>
-        </div>
-      </div>
     </div>
 
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe números para procesar... Ej: 2026"></textarea>
-      </div>
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header copper">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="cesar.html">← CÉSAR</a>
+        <span class="fn-dot">·</span>
+        <a href="rot13.html">ROT-13 →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 2 / 6</span>
     </div>
 
-  </div>
-</div>
-
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="cesar.html">← CÉSAR</a>
-  <span class="fn-dot">·</span>
-  <a href="rot13.html">ROT-13 →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 2 / 6</span>
-</div>
-
-<script src="js/ciphers/rot5.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/rot5-page.js"></script>
+    <script src="js/ciphers/rot5.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/rot5-page.js"></script>
 </body>
+
 </html>

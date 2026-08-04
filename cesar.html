@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,167 +9,166 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
+
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<!-- NAV -->
-<nav class="site-nav">
-    <a href="index.html" class="nav-back">← INICIO</a>
-    <span class="nav-sep">|</span>
-    <span class="nav-page-name">CIFRADO CÉSAR</span>
-    <div class="nav-status">
-        <span class="status-dot"></span>
-        <span>Offline</span>
+    <!-- NAV -->
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
         <span class="nav-sep">|</span>
-        <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
+        <span class="nav-page-name">CIFRADO CÉSAR</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow">ca. 58 A.C. — Comunicaciones del ejército romano de Julio César</p>
+        <h1 class="cipher-title">Cifrado César</h1>
+        <p class="cipher-desc">
+            Cada letra del mensaje se reemplaza por la letra situada K posiciones adelante en el alfabeto circular. El descifrado aplica la operación inversa. Cifrado: <span class="theory-formula">C = (P + K) mod N</span> &nbsp;·&nbsp; Descifrado:
+            <span
+                class="theory-formula">P = (C − K + N) mod N</span>. Con N=26 solo existen 25 claves distintas; susceptible a fuerza bruta en segundos.
+        </p>
     </div>
-</nav>
 
-<!-- HEADER -->
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-    <p class="cipher-eyebrow">ca. 58 A.C. — Comunicaciones del ejército romano de Julio César</p>
-    <h1 class="cipher-title">Cifrado César</h1>
-    <p class="cipher-desc">
-        Cada letra del mensaje se reemplaza por la letra situada K posiciones adelante en el alfabeto circular.
-        El descifrado aplica la operación inversa.
-        Cifrado: <span class="theory-formula">C = (P + K) mod N</span> &nbsp;·&nbsp;
-        Descifrado: <span class="theory-formula">P = (C − K + N) mod N</span>.
-        Con N=26 solo existen 25 claves distintas; susceptible a fuerza bruta en segundos.
-    </p>
-</div>
+    <!-- WORKSPACE -->
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-<!-- WORKSPACE -->
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-    <div class="workspace-grid">
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header copper">Parámetros</div>
 
-        <!-- LEFT: PARAMS -->
-        <div class="workspace-panel">
-            <div class="panel-header copper">Parámetros</div>
+                <form id="cesarForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1.1rem;">
 
-            <form id="cesarForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1.1rem;">
-
-                <div>
-                    <label class="field-label" for="idioma">Alfabeto</label>
-                    <select id="idioma" class="field-select">
+                    <div>
+                        <label class="field-label" for="idioma">Alfabeto</label>
+                        <select id="idioma" class="field-select">
                         <option value="ES">Español (Con Ñ)</option>
                         <option value="EN">Inglés (Sin Ñ)</option>
                         <option value="CUSTOM">Personalizado...</option>
                     </select>
-                </div>
-
-                <div id="customAlphabetContainer" style="display:none;">
-                    <label class="field-label" for="alfabetoCustom" style="color:var(--copper);">Alfabeto Personalizado</label>
-                    <input type="text" id="alfabetoCustom" class="field-input" placeholder="Ej: QWERTYUIOP..." style="text-transform:uppercase;">
-                    <span style="font-size:0.6rem; color:var(--paper-dim); display:block; margin-top:0.25rem;">Caracteres únicos, sin espacios.</span>
-                </div>
-
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                        <label class="field-label" style="margin:0;">Desplazamiento (K)</label>
-                        <span id="claveValueDisplay" class="value-display">3</span>
                     </div>
-                    <input type="range" id="clave" min="1" max="50" value="3" style="--fill:4%;">
-                </div>
 
-            </form>
-
-            <details class="theory-details">
-                <summary>Teoría del Método</summary>
-                <div class="theory-body">
-                    <p>El Cifrado César desplaza cada carácter K posiciones en el alfabeto de N letras.</p>
-                    <p>
-                        Cifrado: <span class="theory-formula">C = (P + K) mod N</span><br>
-                        Descifrado: <span class="theory-formula">P = (C − K + N) mod N</span>
-                    </p>
-                    <p>Con N=26, solo hay 25 claves posibles — completamente vulnerable a fuerza bruta o análisis de frecuencias.</p>
-                </div>
-            </details>
-        </div>
-
-        <!-- CENTER: VISUALIZER -->
-        <div class="workspace-panel">
-            <div class="panel-header copper">Mapeo de Alfabetos</div>
-
-            <div style="display:flex; flex-direction:column; gap:1.1rem; height:calc(100% - 2.5rem); justify-content:center;">
-                <div>
-                    <div class="field-label">Alfabeto Original (P)</div>
-                    <div id="alfabetoBaseDisplay" class="alphabet-strip"></div>
-                </div>
-
-                <div style="text-align:center; color:var(--copper); font-family:var(--font-mono); font-size:1rem; letter-spacing:0.3em;">
-                    ↓ +K
-                </div>
-
-                <div>
-                    <div class="field-label" style="color:var(--copper);">Alfabeto Cifrado (C)</div>
-                    <div id="alfabetoCifradoDisplay" class="alphabet-strip accent"></div>
-                </div>
-
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
-                    <div class="metric-box">
-                        <span class="metric-label">Desplazamiento K</span>
-                        <span class="metric-value copper" id="metricK">3</span>
+                    <div id="customAlphabetContainer" style="display:none;">
+                        <label class="field-label" for="alfabetoCustom" style="color:var(--copper);">Alfabeto Personalizado</label>
+                        <input type="text" id="alfabetoCustom" class="field-input" placeholder="Ej: QWERTYUIOP..." style="text-transform:uppercase;">
+                        <span style="font-size:0.6rem; color:var(--paper-dim); display:block; margin-top:0.25rem;">Caracteres únicos, sin espacios.</span>
                     </div>
-                    <div class="metric-box">
-                        <span class="metric-label">Tamaño Alfabeto N</span>
-                        <span class="metric-value" id="metricN">27</span>
+
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                            <label class="field-label" style="margin:0;">Desplazamiento (K)</label>
+                            <span id="claveValueDisplay" class="value-display">3</span>
+                        </div>
+                        <input type="range" id="clave" min="1" max="50" value="3" style="--fill:4%;">
+                    </div>
+
+                </form>
+
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        <p>El Cifrado César desplaza cada carácter K posiciones en el alfabeto de N letras.</p>
+                        <p>
+                            Cifrado: <span class="theory-formula">C = (P + K) mod N</span><br> Descifrado: <span class="theory-formula">P = (C − K + N) mod N</span>
+                        </p>
+                        <p>Con N=26, solo hay 25 claves posibles — completamente vulnerable a fuerza bruta o análisis de frecuencias.</p>
+                    </div>
+                </details>
+            </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div class="workspace-panel">
+                <div class="panel-header copper">Mapeo de Alfabetos</div>
+
+                <div style="display:flex; flex-direction:column; gap:1.1rem; height:calc(100% - 2.5rem); justify-content:center;">
+                    <div>
+                        <div class="field-label">Alfabeto Original (P)</div>
+                        <div id="alfabetoBaseDisplay" class="alphabet-strip"></div>
+                    </div>
+
+                    <div style="text-align:center; color:var(--copper); font-family:var(--font-mono); font-size:1rem; letter-spacing:0.3em;">
+                        ↓ +K
+                    </div>
+
+                    <div>
+                        <div class="field-label" style="color:var(--copper);">Alfabeto Cifrado (C)</div>
+                        <div id="alfabetoCifradoDisplay" class="alphabet-strip accent"></div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+                        <div class="metric-box">
+                            <span class="metric-label">Desplazamiento K</span>
+                            <span class="metric-value copper" id="metricK">3</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Tamaño Alfabeto N</span>
+                            <span class="metric-value" id="metricN">27</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- RIGHT: WORK -->
-        <div class="workspace-right">
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
 
-            <div class="workspace-panel" style="display:flex; flex-direction:column;">
-                <div class="panel-header">
-                    <span>Texto Original</span>
-                    <div style="display:flex; gap:0.35rem;">
-                        <button id="btnPegar" class="btn-secondary">Pegar</button>
-                        <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
                     </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto a cifrar...&#10;Ej: HOLA MUNDO"></textarea>
                 </div>
-                <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;"
-                    placeholder="Escribe el texto a cifrar...&#10;Ej: HOLA MUNDO"></textarea>
-            </div>
 
-            <div class="workspace-panel" style="display:flex; flex-direction:column;">
-                <div class="panel-header copper">
-                    <span>Texto Cifrado</span>
-                    <button id="btnCopiar" class="btn-primary">Copiar</button>
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header copper">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
                 </div>
-                <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;"
-                    readonly placeholder="El resultado aparecerá aquí..."></textarea>
-            </div>
 
+            </div>
         </div>
     </div>
-</div>
 
-<!-- BOTTOM NAV -->
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-    <span style="color:var(--border-strong); cursor:default;">← —</span>
-    <span class="fn-dot">·</span>
-    <a href="rot5.html">ROT-5 →</a>
-    <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 1 / 6</span>
-</div>
+    <!-- BOTTOM NAV -->
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <span style="color:var(--border-strong); cursor:default;">← —</span>
+        <span class="fn-dot">·</span>
+        <a href="rot5.html">ROT-5 →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 1 / 6</span>
+    </div>
 
-<script src="js/ciphers/cesar.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/cesar-page.js"></script>
-<script>
-    // Slider fill sync
-    const slider = document.getElementById('clave');
-    function syncSlider(s) {
-        const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
-        s.style.setProperty('--fill', pct);
-    }
-    if (slider) {
-        slider.addEventListener('input', () => syncSlider(slider));
-        syncSlider(slider);
-    }
-</script>
+    <script src="js/ciphers/cesar.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/cesar-page.js"></script>
+    <script>
+        // Slider fill sync
+        const slider = document.getElementById('clave');
+
+        function syncSlider(s) {
+            const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
+            s.style.setProperty('--fill', pct);
+        }
+        if (slider) {
+            slider.addEventListener('input', () => syncSlider(slider));
+            syncSlider(slider);
+        }
+    </script>
 </body>
+
 </html>
