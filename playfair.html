@@ -1,185 +1,140 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cifrado Playfair | CriptoSuite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="css/global.css">
-    <style>
-        .matrix-cell {
-            background-color: rgba(168, 85, 247, 0.06);
-            color: #a855f7;
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 8px;
-            padding: 10px 8px;
-            transition: all 0.2s ease;
-        }
-        .dark .matrix-cell {
-            background-color: rgba(17, 24, 39, 0.6);
-            color: #c084fc;
-            border-color: rgba(168, 85, 247, 0.15);
-        }
-        .matrix-cell:hover {
-            transform: scale(1.06);
-            background-color: rgba(168, 85, 247, 0.15);
-            border-color: #a855f7;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cifrado Playfair | CriptoSuite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .matrix-cell {
+        background-color: rgba(154, 59, 51, 0.06);
+        color: var(--red);
+        border: 1px solid rgba(154, 59, 51, 0.2);
+        border-radius: 4px;
+        padding: 10px 8px;
+        transition: all 0.2s ease;
+    }
+    .matrix-cell:hover {
+        transform: scale(1.06);
+        background-color: rgba(154, 59, 51, 0.15);
+        border-color: var(--red);
+    }
+  </style>
 </head>
-<body class="text-slate-800 dark:text-slate-100 min-h-screen font-sans cyber-grid antialiased transition-colors duration-300">
+<body>
 
-<div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 max-w-xs w-full"></div>
+<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="index.html" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-purple-600 dark:hover:text-purple-400 transition-all font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Volver al Menú
-            </a>
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Cliente Estático Activo</span>
-                </div>
-                <button id="theme-toggle" class="p-2 ml-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" aria-label="Cambiar tema">
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.415l-.707-.708a1 1 0 010-1.414zm3.78 4.68a1 1 0 110 2h-1a1 1 0 110-2h1zm-2.32 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 010 1.415l-.707.708a1 1 0 01-1.415-1.414l.707-.707a1 1 0 011.415 0zM2 10a1 1 0 110-2h1a1 1 0 110 2H2zm2.32-4.22a1 1 0 011.415 0l.707.707a1 1 0 11-1.415 1.415l-.707-.707a1 1 0 010-1.415zM10 5a5 5 0 100 10 5 5 0 000-10z"></path>
-                    </svg>
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+<nav class="site-nav">
+  <a href="index.html" class="nav-back">← INICIO</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-page-name">PLAYFAIR</span>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span>Offline</span>
+    <span class="nav-sep">|</span>
+    <span class="badge badge-math" style="font-size:0.55rem; padding:1px 6px;">Polialfabético</span>
+  </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center gap-3 animate-fade-in">
-        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-650 dark:from-purple-400 dark:to-indigo-550 transition-colors whitespace-nowrap">Cifrado Playfair</h1>
-        <span class="hidden md:block w-1.5 h-6 bg-slate-300 dark:bg-slate-700 rounded-full flex-shrink-0"></span>
-        <p class="text-slate-500 dark:text-slate-400 text-sm transition-colors">
-            Cifrado simétrico polialfabético que agrupa letras en dígrafos en una grilla de 5x5
-        </p>
-    </header>
+<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+  <p class="cipher-eyebrow red">1854 — Charles Wheatstone / Lord Playfair — Primera y Segunda Guerra Mundial</p>
+  <h1 class="cipher-title">Cifrado Playfair</h1>
+  <p class="cipher-desc">Opera sobre pares de letras (dígrafos) dentro de una cuadrícula 5×5 construida con la clave. Fue el primer cifrado en operar sobre unidades mayores que una letra, lo que defiende contra el análisis de frecuencias de letras individuales.</p>
+</div>
 
-    <!-- WORKSPACE DE 3 PANELES -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in-delay">
-        
-        <!-- PANEL IZQUIERDO: CONFIGURACIÓN (col-span-3) -->
-        <div class="lg:col-span-3 flex flex-col gap-6">
-            <div id="panelParametros" class="glass-panel rounded-2xl p-5">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                    Parámetros
-                </h2>
-                <form id="playfairForm" class="space-y-4" onsubmit="event.preventDefault();">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Alfabeto / Idioma</label>
-                        <select id="idioma" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-purple-500">
-                            <option value="ES">Español (I/J y N/Ñ fusionadas)</option>
-                            <option value="EN">Inglés (I/J fusionadas)</option>
-                            <option value="CUSTOM">Personalizado...</option>
-                        </select>
-                    </div>
+<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+  <div class="workspace-grid">
 
-                    <div id="customAlphabetContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1.5">Crea tu Alfabeto Base</label>
-                        <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGH..." class="w-full bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-500/50 rounded-xl px-3 py-2 text-xs outline-none uppercase">
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Palabra Clave</label>
-                        <input type="text" id="clave" value="" placeholder="Ej: ENCRIPTACION" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs outline-none uppercase focus:border-purple-500">
-                    </div>
-
-                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/55 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <input type="checkbox" id="eliminarRelleno" checked class="w-4 h-4 text-purple-500 focus:ring-purple-500 border-slate-200 dark:border-slate-800 rounded cursor-pointer bg-white dark:bg-slate-900">
-                        <label for="eliminarRelleno" class="text-[10px] font-bold text-slate-500 dark:text-slate-400 cursor-pointer select-none">Omitir relleno al descifrar</label>
-                    </div>
-                </form>
-            </div>
-
-            <!-- ACORDEÓN TEORÍA -->
-            <details class="glass-panel rounded-2xl p-5 group cursor-pointer">
-                <summary class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-widest select-none">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Teoría
-                    </span>
-                    <svg class="w-4 h-4 transition-transform duration-250 text-slate-400 group-hover:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </summary>
-                <div class="mt-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
-                    <p>
-                        Playfair cifra pares de letras (dígrafos) en lugar de letras individuales. Al hacerlo, distorsiona la estructura de la frecuencia de letras simples.
-                    </p>
-                    <p>
-                        Usa una cuadrícula de 5x5 generada a partir de la palabra clave. Las letras del dígrafo se encriptan según si se encuentran en la misma fila, columna, o forman un rectángulo.
-                    </p>
-                </div>
-            </details>
+    <!-- LEFT: PARAMS -->
+    <div class="workspace-panel">
+      <div class="panel-header red">Parámetros</div>
+      <form id="playfairForm" style="display:flex; flex-direction:column; gap:1rem;" onsubmit="event.preventDefault();">
+        <div>
+            <label class="field-label">Alfabeto / Idioma</label>
+            <select id="idioma" class="field-select">
+                <option value="ES">Español (I/J y N/Ñ fusionadas)</option>
+                <option value="EN">Inglés (I/J fusionadas)</option>
+                <option value="CUSTOM">Personalizado...</option>
+            </select>
         </div>
 
-        <!-- PANEL CENTRAL: VISUALIZADOR INTERACTIVO (col-span-5) -->
-        <div id="panelSimulador" class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col min-h-[380px]">
-            <h2 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                <span>👁️</span> Matriz Playfair 5×5
-            </h2>
-
-            <div class="flex-grow flex items-center justify-center py-2">
-                <div class="w-full max-w-xs bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4">
-                    <div id="matrixGrid" class="grid grid-cols-5 gap-2 font-mono text-center text-sm font-bold"></div>
-                </div>
-            </div>
+        <div id="customAlphabetContainer" style="display:none;">
+            <label class="field-label">Crea tu Alfabeto Base</label>
+            <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGH..." class="field-input uppercase">
         </div>
 
-        <!-- PANEL DERECHO: TEXTO DE TRABAJO (col-span-4) -->
-        <div class="lg:col-span-4 flex flex-col gap-6">
-            <!-- Entrada de Texto -->
-            <div id="panelEntrada" class="glass-panel rounded-2xl p-5 flex flex-col">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Texto Original</span>
-                    <div class="flex gap-1.5">
-                        <button id="btnPegar" type="button" class="btn-action btn-util">Pegar</button>
-                        <button id="btnLimpiar" type="button" class="btn-action btn-util btn-util-red">Limpiar</button>
-                    </div>
-                </div>
-                <textarea id="textoEntrada" placeholder="Escribe el texto claro para cifrar... Ej: Playfair" class="premium-textarea w-full h-24 text-sm outline-none resize-none custom-scrollbar p-3" style="background-color: var(--input-bg);"></textarea>
-                
-                <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
-                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Diagramas (Dígrafos)</span>
-                    <div id="digrafosDisplay" class="font-mono text-xs text-purple-500 bg-slate-50 dark:bg-slate-900 px-3 py-2 rounded-xl border border-slate-205 dark:border-slate-800 min-h-9 flex items-center break-all">
-                        Esperando texto...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Salida de Texto -->
-            <div id="panelSalida" class="glass-panel rounded-2xl p-5 flex flex-col border-purple-500/10">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-purple-500 uppercase tracking-widest">Texto Cifrado</span>
-                    <button id="btnCopiar" type="button" class="btn-action btn-util">Copiar</button>
-                </div>
-                <textarea id="textoSalida" placeholder="El resultado aparecerá aquí..." class="premium-textarea w-full h-28 text-sm outline-none resize-none custom-scrollbar p-3 text-purple-500" style="background-color: var(--input-bg);" readonly></textarea>
-            </div>
+        <div>
+            <label class="field-label">Palabra Clave</label>
+            <input type="text" id="clave" value="" placeholder="Ej: ENCRIPTACION" class="field-input uppercase">
         </div>
 
+        <div style="display:flex; align-items:center; gap:0.5rem; background:var(--bg); padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+            <input type="checkbox" id="eliminarRelleno" checked style="accent-color:var(--red); cursor:pointer;">
+            <label for="eliminarRelleno" style="font-size:0.65rem; font-weight:bold; color:var(--paper-dim); cursor:pointer; user-select:none;">Omitir relleno al descifrar</label>
+        </div>
+      </form>
+
+      <details class="theory-details" style="margin-top:1.5rem;">
+        <summary>Teoría del Método</summary>
+        <div class="theory-body">Las reglas de Playfair por cada dígrafo: (1) Misma fila → desplazar columna a la derecha; (2) Misma columna → desplazar fila hacia abajo; (3) Rectángulo → intercambiar columnas. I/J comparten celda. Las letras dobles se separan insertando X entre ellas.</div>
+      </details>
     </div>
+
+    <!-- CENTER: VISUALIZER -->
+    <div id="panelSimulador" class="workspace-panel">
+      <div class="panel-header red">Matriz Playfair 5×5</div>
+      <div style="flex-grow:1; display:flex; align-items:center; justify-content:center; padding:1rem 0;">
+          <div style="width:100%; max-width:250px; background:var(--bg); border:1px solid var(--border-strong); border-radius:8px; padding:1rem;">
+              <div id="matrixGrid" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0.5rem; font-family:var(--font-mono); text-align:center; font-size:0.875rem; font-weight:bold;"></div>
+          </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: WORK -->
+    <div class="workspace-right">
+      <div class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header">
+          <span>Texto Original</span>
+          <div style="display:flex; gap:0.35rem;">
+            <button id="btnPegar" class="btn-secondary">Pegar</button>
+            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+          </div>
+        </div>
+        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:100px;" placeholder="Escribe el texto claro para cifrar... Ej: Playfair"></textarea>
+        
+        <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+            <span class="field-label">Diagramas (Dígrafos)</span>
+            <div id="digrafosDisplay" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--red); background:var(--bg); padding:0.5rem; border-radius:4px; border:1px solid var(--border); min-height:36px; display:flex; align-items:center; word-break:break-all;">
+                Esperando texto...
+            </div>
+        </div>
+      </div>
+      
+      <div class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header red">
+          <span>Texto Cifrado</span>
+          <button id="btnCopiar" class="btn-primary">Copiar</button>
+        </div>
+        <textarea id="textoSalida" class="cipher-output output-math" style="flex:1; min-height:110px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+  <a href="alberti.html">← ALBERTI</a>
+  <span class="fn-dot">·</span>
+  <a href="hill.html">HILL →</a>
+  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Polialfabético · 3 / 4</span>
 </div>
 
 <script src="js/ciphers/playfair.js"></script>
 <script src="js/crypto-ux.js"></script>
 <script src="js/pages/playfair-page.js"></script>
-<script src="js/theme.js"></script>
 </body>
 </html>

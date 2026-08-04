@@ -1,227 +1,187 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cifrado por Columnas | CriptoSuite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="css/global.css">
-    <style>
-        #matrixTable th, #matrixTable td {
-            padding: 8px 12px;
-            border: 1px solid var(--panel-border);
-        }
-        #matrixTable th {
-            background-color: rgba(20, 184, 166, 0.1);
-            color: #0d9488;
-        }
-        #matrixTable td {
-            color: var(--text-primary);
-        }
-        .key-header {
-            color: #0d9488 !important; font-weight: bold; background-color: rgba(20, 184, 166, 0.15) !important;
-        }
-
-        .radio-toggle input:checked + .radio-label-cifrar { background: #0d9488; color: #fff; box-shadow: 0 0 16px rgba(20, 184, 166, 0.4); }
-        .radio-toggle input:checked + .radio-label-descifrar { background: #0f766e; color: #fff; box-shadow: 0 0 16px rgba(15, 118, 110, 0.4); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cifrado por Columnas | CriptoSuite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    #matrixTable {
+        width: 100%; text-align: center; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.85rem;
+    }
+    #matrixTable th, #matrixTable td {
+        padding: 6px 10px;
+        border: 1px solid var(--border-strong);
+    }
+    #matrixTable th {
+        background-color: rgba(76, 107, 84, 0.2);
+        color: var(--green);
+        font-weight: normal;
+    }
+    #matrixTable td {
+        color: var(--paper);
+    }
+    .key-header {
+        color: var(--green) !important; font-weight: bold !important; background-color: rgba(76, 107, 84, 0.3) !important;
+    }
+  </style>
 </head>
-<body class="text-slate-800 dark:text-slate-100 min-h-screen font-sans cyber-grid antialiased transition-colors duration-300">
+<body>
 
-<div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 max-w-xs w-full"></div>
+<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="index.html" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition-all font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Volver al Menú
-            </a>
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Cliente Estático Activo</span>
-                </div>
-                <button id="theme-toggle" class="p-2 ml-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" aria-label="Cambiar tema">
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.415l-.707-.708a1 1 0 010-1.414zm3.78 4.68a1 1 0 110 2h-1a1 1 0 110-2h1zm-2.32 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 010 1.415l-.707.708a1 1 0 01-1.415-1.414l.707-.707a1 1 0 011.415 0zM2 10a1 1 0 110-2h1a1 1 0 110 2H2zm2.32-4.22a1 1 0 011.415 0l.707.707a1 1 0 11-1.415 1.415l-.707-.707a1 1 0 010-1.415zM10 5a5 5 0 100 10 5 5 0 000-10z"></path>
-                    </svg>
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+<nav class="site-nav">
+  <a href="index.html" class="nav-back">← INICIO</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-page-name">COLUMNAS</span>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span>Offline</span>
+    <span class="nav-sep">|</span>
+    <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
+  </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center gap-3 animate-fade-in">
-        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-555 to-teal-700 dark:from-teal-400 dark:to-teal-500 transition-colors whitespace-nowrap">Cifrado por Columnas</h1>
-        <span class="hidden md:block w-1.5 h-6 bg-slate-300 dark:bg-slate-700 rounded-full flex-shrink-0"></span>
-        <p class="text-slate-500 dark:text-slate-400 text-sm transition-colors">
-            Cifrado de transposición geométrica ordenando el texto en cuadrículas rectangulares
-        </p>
-    </header>
+<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+  <p class="cipher-eyebrow green">s. XIX — Cifrado estándar de comunicaciones militares — transposición columnar</p>
+  <h1 class="cipher-title">Cifrado por Columnas</h1>
+  <p class="cipher-desc">El texto claro se inscribe horizontalmente en filas de longitud N (definida por la clave). Luego se extrae verticalmente, leyendo columnas en el orden alfabético de la palabra clave. <span class="theory-formula">El criptograma concatena las columnas en ese orden.</span></p>
+</div>
 
-    <!-- WORKSPACE DE 3 PANELES -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in-delay">
-        
-        <!-- PANEL IZQUIERDO: CONFIGURACIÓN (col-span-3) -->
-        <div class="lg:col-span-3 flex flex-col gap-6">
-            <div id="panelParametros" class="glass-panel rounded-2xl p-5">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                    Parámetros
-                </h2>
-                <form id="columnasForm" class="space-y-4" onsubmit="event.preventDefault();">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tipo Transposición</label>
-                        <select id="tipoCifrado" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-teal-500">
-                            <option value="SIMPLE">Columnas Simples (Sin Clave)</option>
-                            <option value="CLAVE">Columnas con Clave (Permutada)</option>
-                        </select>
-                    </div>
+<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+  <div class="workspace-grid">
 
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Alfabeto</label>
-                        <select id="idioma" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-teal-500">
-                            <option value="ES">Español (Con Ñ)</option>
-                            <option value="EN">Inglés (Sin Ñ)</option>
-                            <option value="CUSTOM">Personalizado...</option>
-                        </select>
-                    </div>
-
-                    <div id="customAlphabetContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1.5">Alfabeto Personalizado</label>
-                        <input type="text" id="alfabetoCustom" placeholder="Ej: QWERTY..." class="w-full bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-500/50 rounded-xl px-3 py-2 text-xs outline-none uppercase">
-                    </div>
-
-                    <div id="simpleColsContainer">
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Número de Columnas</label>
-                            <span id="colsValueDisplay" class="text-xs font-black text-teal-500 tabular-nums">3</span>
-                        </div>
-                        <input type="range" id="numCols" min="2" max="15" value="3" class="w-full">
-                    </div>
-
-                    <div id="claveKeyContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Palabra Clave</label>
-                        <input type="text" id="clave" value="PERICO" placeholder="Ej: PERICO" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none uppercase focus:border-teal-500">
-                    </div>
-                </form>
-
-                <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
-                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Matriz</span>
-                    <div class="space-y-1.5 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px]">
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Columnas (Nc):</span>
-                            <span id="displayNc" class="font-bold text-slate-700 dark:text-slate-250">3</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Longitud Texto (Lc):</span>
-                            <span id="displayLc" class="font-bold text-slate-700 dark:text-slate-250">0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Filas (Nf):</span>
-                            <span id="displayNf" class="font-bold text-teal-500">0</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-1 border-t border-slate-200 dark:border-slate-800">
-                            <span class="text-slate-400">Clave Estado:</span>
-                            <span id="keyStatus" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-500">VÁLIDA</span>
-                        </div>
-                        <div class="pt-1.5 flex flex-col gap-1 border-t border-slate-200 dark:border-slate-800">
-                            <span class="text-slate-400">Alfabeto Activo:</span>
-                            <span id="displayAlfabeto" class="font-mono text-[9px] break-all bg-white dark:bg-slate-950 p-1.5 rounded border border-slate-200 dark:border-slate-900 text-slate-500">ABCDEFGH...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ACORDEÓN TEORÍA -->
-            <details class="glass-panel rounded-2xl p-5 group cursor-pointer">
-                <summary class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-widest select-none">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Teoría
-                    </span>
-                    <svg class="w-4 h-4 transition-transform duration-250 text-slate-400 group-hover:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </summary>
-                <div class="mt-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
-                    <p>
-                        El Cifrado por Columnas reescribe el mensaje horizontalmente en filas de longitud Nc fija y luego lee verticalmente columna a columna.
-                    </p>
-                    <p>
-                        En la versión con clave, las columnas se leen siguiendo el orden alfabético de la palabra clave, lo que añade una permutación adicional y mayor seguridad.
-                    </p>
-                </div>
-            </details>
+    <!-- LEFT: PARAMS -->
+    <div class="workspace-panel">
+      <div class="panel-header green">Parámetros</div>
+      
+      <form id="columnasForm" class="p-4 flex flex-col gap-4" onsubmit="event.preventDefault();">
+        <div>
+          <label class="field-label">Tipo Transposición</label>
+          <select id="tipoCifrado" class="field-select w-full mt-1">
+            <option value="SIMPLE">Columnas Simples (Sin Clave)</option>
+            <option value="CLAVE">Columnas con Clave (Permutada)</option>
+          </select>
         </div>
 
-        <!-- PANEL CENTRAL: VISUALIZADOR INTERACTIVO (col-span-5) -->
-        <div id="panelSimulador" class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col min-h-[380px]">
-            <h2 class="text-xs font-bold text-teal-500 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                <span>👁️</span> Matriz de Reacomodo Dinámico
-            </h2>
-
-            <div class="flex-grow flex items-center justify-center py-2">
-                <div class="w-full overflow-x-auto custom-scrollbar bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4">
-                    <table id="matrixTable" class="w-full text-center border-collapse font-mono text-sm"></table>
-                </div>
-            </div>
+        <div>
+          <label class="field-label">Alfabeto</label>
+          <select id="idioma" class="field-select w-full mt-1">
+            <option value="ES">Español (Con Ñ)</option>
+            <option value="EN">Inglés (Sin Ñ)</option>
+            <option value="CUSTOM">Personalizado...</option>
+          </select>
         </div>
 
-        <!-- PANEL DERECHO: TEXTO DE TRABAJO (col-span-4) -->
-        <div class="lg:col-span-4 flex flex-col gap-6">
-            <!-- Entrada de Texto -->
-            <div id="panelEntrada" class="glass-panel rounded-2xl p-5 flex flex-col">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Texto Original</span>
-                    <div class="flex gap-1.5">
-                        <button id="btnPegar" type="button" class="btn-action btn-util">Pegar</button>
-                        <button id="btnLimpiar" type="button" class="btn-action btn-util btn-util-red">Limpiar</button>
-                    </div>
-                </div>
-                <textarea id="textoEntrada" placeholder="Escribe el texto claro para cifrar... Ej: CRIPTO" class="premium-textarea w-full h-32 text-sm outline-none resize-none custom-scrollbar p-3" style="background-color: var(--input-bg);"></textarea>
-            </div>
-
-            <!-- Salida de Texto -->
-            <div id="panelSalida" class="glass-panel rounded-2xl p-5 flex flex-col border-teal-500/10">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-teal-500 uppercase tracking-widest">Texto Cifrado</span>
-                    <button id="btnCopiar" type="button" class="btn-action btn-util">Copiar</button>
-                </div>
-                <textarea id="textoSalida" placeholder="El resultado aparecerá aquí..." class="premium-textarea w-full h-32 text-sm outline-none resize-none custom-scrollbar p-3 text-teal-500" style="background-color: var(--input-bg);" readonly></textarea>
-            </div>
+        <div id="customAlphabetContainer" class="hidden">
+          <label class="field-label" style="color:var(--green);">Alfabeto Personalizado</label>
+          <input type="text" id="alfabetoCustom" placeholder="Ej: QWERTY..." class="field-input w-full mt-1 uppercase">
         </div>
 
+        <div id="simpleColsContainer">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="field-label">Número de Columnas</label>
+            <span id="colsValueDisplay" class="value-display" style="color:var(--green);">3</span>
+          </div>
+          <input type="range" id="numCols" min="2" max="15" value="3" class="w-full mt-2" style="--fill:7.7%;">
+        </div>
+
+        <div id="claveKeyContainer" class="hidden">
+          <label class="field-label">Palabra Clave</label>
+          <input type="text" id="clave" value="PERICO" placeholder="Ej: PERICO" class="field-input w-full mt-1 uppercase">
+        </div>
+      </form>
+
+      <div class="p-4 border-t" style="border-color:var(--border);">
+        <span class="field-label" style="display:block; margin-bottom:0.5rem;">Detalles de Matriz</span>
+        <div style="display:flex; flex-direction:column; gap:0.25rem; font-family:var(--font-mono); font-size:0.75rem; color:var(--paper-dim); background:rgba(0,0,0,0.2); padding:0.5rem; border:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between;">
+            <span>Columnas (Nc):</span>
+            <span id="displayNc" style="color:var(--paper);">3</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Longitud Texto (Lc):</span>
+            <span id="displayLc" style="color:var(--paper);">0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Filas (Nf):</span>
+            <span id="displayNf" style="color:var(--green);">0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:0.25rem; margin-top:0.25rem;">
+            <span>Clave Estado:</span>
+            <span id="keyStatus" style="color:var(--green); font-size:0.65rem; font-weight:bold; padding:2px 4px; background:rgba(76,107,84,0.2);">VÁLIDA</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.25rem; border-top:1px solid var(--border); padding-top:0.25rem; margin-top:0.25rem;">
+            <span>Alfabeto Activo:</span>
+            <span id="displayAlfabeto" style="font-size:0.65rem; word-break:break-all; background:var(--bg); padding:2px 4px; border:1px solid var(--border);">ABCDEFGH...</span>
+          </div>
+        </div>
+      </div>
+
+      <details class="theory-details">
+        <summary>Teoría del Método</summary>
+        <div class="theory-body">
+          <p>La longitud de la clave determina el número de columnas. Las columnas se reordenan según el rango alfabético de cada letra de la clave (A=1, B=2...).</p>
+          <p>Sin clave, las columnas se leen en orden natural. La fortaleza aumenta con claves largas y sin letras repetidas.</p>
+        </div>
+      </details>
     </div>
+
+    <!-- CENTER: VISUALIZER -->
+    <div id="panelSimulador" class="workspace-panel">
+      <div class="panel-header green">Matriz de Reacomodo Dinámico</div>
+      
+      <div class="p-4" style="overflow-x:auto;">
+        <table id="matrixTable"></table>
+      </div>
+    </div>
+
+    <!-- RIGHT: WORK -->
+    <div class="workspace-right">
+      <div class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header">
+          <span>Texto Original</span>
+          <div style="display:flex; gap:0.35rem;">
+            <button id="btnPegar" class="btn-secondary">Pegar</button>
+            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+          </div>
+        </div>
+        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: CRIPTO"></textarea>
+      </div>
+      
+      <div class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header green">
+          <span>Texto Cifrado</span>
+          <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
+        </div>
+        <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+  <a href="escitala.html">← ESCÍTALA</a>
+  <span class="fn-dot">·</span>
+  <a href="filas.html">FILAS →</a>
+  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 2 / 5</span>
 </div>
 
 <script src="js/ciphers/columnas.js"></script>
 <script src="js/crypto-ux.js"></script>
 <script src="js/pages/columnas-page.js"></script>
 <script>
-    document.getElementById('numCols').addEventListener('input', function() {
-        const min = +this.min, max = +this.max, val = +this.value;
-        this.style.setProperty('--fill', ((val - min) / (max - min) * 100) + '%');
-    });
-    (function() {
-        const s = document.getElementById('numCols');
-        if (s) {
-            const min = +s.min, max = +s.max, val = +s.value;
-            s.style.setProperty('--fill', ((val - min) / (max - min) * 100) + '%');
-        }
-    })();
+document.querySelectorAll('input[type=range]').forEach(s => {
+    function sync() {
+        const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
+        s.style.setProperty('--fill', pct);
+    }
+    s.addEventListener('input', sync); sync();
+});
 </script>
-<script src="js/theme.js"></script>
 </body>
 </html>

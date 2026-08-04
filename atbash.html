@@ -1,206 +1,167 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cifrado Atbash | CriptoSuite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="css/global.css">
-    <style>
-        .mapping-scroll { overflow-x: auto; scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.3) transparent; }
-        .mapping-scroll::-webkit-scrollbar { height: 6px; }
-        .mapping-scroll::-webkit-scrollbar-track { background: transparent; }
-        .mapping-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 999px; }
-        .mapping-row { display: flex; gap: 4px; min-width: max-content; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATBASH | CriptoSuite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .mapping-scroll { overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--copper) transparent; }
+    .mapping-scroll::-webkit-scrollbar { height: 6px; }
+    .mapping-scroll::-webkit-scrollbar-track { background: transparent; }
+    .mapping-scroll::-webkit-scrollbar-thumb { background: var(--copper); border-radius: 999px; }
+    .mapping-row { display: flex; gap: 4px; min-width: max-content; }
 
-        .letter-cell {
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            border-radius: 8px; font-family: ui-monospace, monospace;
-            font-size: 12px; font-weight: 800; border: 1px solid var(--panel-border); transition: all 0.2s;
-        }
+    .letter-cell {
+        width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+        border-radius: 4px; font-family: var(--font-mono);
+        font-size: 14px; border: 1px solid var(--border-strong); transition: all 0.2s;
+    }
 
-        .base-cell { color: #6366f1; background: rgba(99, 102, 241, 0.08); }
-        .cipher-cell { color: #0d9488; background: rgba(13, 148, 136, 0.08); }
+    .base-cell { color: var(--paper); background: rgba(255,255,255,0.03); }
+    .cipher-cell { color: var(--copper); background: rgba(193,113,47,0.08); }
 
-        .letter-cell.active-base { background: rgba(99, 102, 241, 0.2); border-color: #6366f1; transform: translateY(-2px); }
-        .letter-cell.active-cipher { background: rgba(13, 148, 136, 0.2); border-color: #0d9488; transform: translateY(2px); }
+    .letter-cell.active-base { background: rgba(255,255,255,0.1); border-color: var(--paper); transform: translateY(-2px); }
+    .letter-cell.active-cipher { background: rgba(193,113,47,0.2); border-color: var(--copper); transform: translateY(2px); }
 
-        .tutorial-focus {
-            position: relative; z-index: 20;
-            box-shadow: 0 0 0 4px rgba(34,211,238,.5), 0 0 35px rgba(34,211,238,.4);
-            border-radius: 12px; transition: all .3s ease;
-        }
-    </style>
+    .tutorial-focus {
+        position: relative; z-index: 20;
+        box-shadow: 0 0 0 4px rgba(193,113,47,0.5), 0 0 35px rgba(193,113,47,0.4);
+        border-radius: 12px; transition: all .3s ease;
+    }
+  </style>
 </head>
-<body class="text-slate-800 dark:text-slate-100 min-h-screen font-sans cyber-grid antialiased transition-colors duration-300">
+<body>
 
-<div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 max-w-xs w-full"></div>
+<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="index.html" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Volver al Menú
-            </a>
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Cliente Estático Activo</span>
-                </div>
-                <button id="theme-toggle" class="p-2 ml-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" aria-label="Cambiar tema">
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.415l-.707-.708a1 1 0 010-1.414zm3.78 4.68a1 1 0 110 2h-1a1 1 0 110-2h1zm-2.32 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 010 1.415l-.707.708a1 1 0 01-1.415-1.414l.707-.707a1 1 0 011.415 0zM2 10a1 1 0 110-2h1a1 1 0 110 2H2zm2.32-4.22a1 1 0 011.415 0l.707.707a1 1 0 11-1.415 1.415l-.707-.707a1 1 0 010-1.415zM10 5a5 5 0 100 10 5 5 0 000-10z"></path>
-                    </svg>
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+<nav class="site-nav">
+  <a href="index.html" class="nav-back">← INICIO</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-page-name">ATBASH</span>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span>Offline</span>
+    <span class="nav-sep">|</span>
+    <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
+  </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center gap-3 animate-fade-in">
-        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-amber-500 dark:from-cyan-300 dark:to-amber-300 transition-colors whitespace-nowrap">Cifrado Atbash</h1>
-        <span class="hidden md:block w-1.5 h-6 bg-slate-300 dark:bg-slate-700 rounded-full flex-shrink-0"></span>
-        <p class="text-slate-500 dark:text-slate-400 text-sm transition-colors">
-            Sustitución en espejo del alfabeto donde los extremos se enlazan de forma inversa
-        </p>
-    </header>
-
-    <!-- WORKSPACE DE 3 PANELES -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in-delay">
-        
-        <!-- PANEL IZQUIERDO: CONFIGURACIÓN (col-span-3) -->
-        <div class="lg:col-span-3 flex flex-col gap-6">
-            <div id="panelParametros" class="glass-panel rounded-2xl p-5">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                    Parámetros
-                </h2>
-                <form id="atbashForm" class="space-y-4" onsubmit="return false;">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Alfabeto</label>
-                        <select id="idioma" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-cyan-500">
-                            <option value="ES">Español (Con Ñ)</option>
-                            <option value="EN">Inglés (Sin Ñ)</option>
-                            <option value="CUSTOM">Personalizado...</option>
-                        </select>
-                    </div>
-
-                    <div id="customAlphabetContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1.5">Alfabeto Customizado</label>
-                        <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGHIJKLMN..." class="w-full bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-500/50 rounded-xl px-3 py-2 text-xs outline-none uppercase">
-                        <p class="text-[9px] text-slate-400 mt-1">Mínimo 2 caracteres sin repeticiones.</p>
-                    </div>
-                </form>
-            </div>
-
-            <!-- ACORDEÓN TEORÍA -->
-            <details class="glass-panel rounded-2xl p-5 group cursor-pointer">
-                <summary class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-widest select-none">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Teoría
-                    </span>
-                    <svg class="w-4 h-4 transition-transform duration-250 text-slate-400 group-hover:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </summary>
-                <div class="mt-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
-                    <p>
-                        El Cifrado Atbash sustituye la primera letra del alfabeto por la última, la segunda por la penúltima, y así sucesivamente (A ↔ Z, B ↔ Y).
-                    </p>
-                    <p>
-                        Se originó en el idioma hebreo tradicional (donde la letra alef se cambia por tav, y bet por shin, dando origen al nombre at-bash).
-                    </p>
-                </div>
-            </details>
-        </div>
-
-        <!-- PANEL CENTRAL: VISUALIZADOR INTERACTIVO (col-span-5) -->
-        <div id="panelSimulador" class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col min-h-[350px]">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xs font-bold text-cyan-500 uppercase tracking-widest flex items-center gap-1.5">
-                    <span>👁️</span> Mapeo Espejo Atbash
-                </h2>
-                <div class="flex items-center gap-2 text-xs bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
-                    <span id="charIn" class="font-mono font-black text-cyan-600 dark:text-cyan-300">-</span>
-                    <span class="text-slate-400">↔</span>
-                    <span id="charOut" class="font-mono font-black text-amber-500 dark:text-amber-300">-</span>
-                </div>
-            </div>
-            
-            <div class="flex-grow flex flex-col justify-center">
-                <div class="mapping-scroll bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4">
-                    <div class="mapping-row mb-3" id="alfabetoTop"></div>
-                    <div class="mapping-row" id="alfabetoBottom"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL DERECHO: TEXTO DE TRABAJO (col-span-4) -->
-        <div class="lg:col-span-4 flex flex-col gap-6">
-            <!-- Entrada de Texto -->
-            <div id="panelEntrada" class="glass-panel rounded-2xl p-5 flex flex-col">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Texto Original</span>
-                    <div class="flex gap-1.5">
-                        <button id="btnPegar" type="button" class="btn-action btn-util">Pegar</button>
-                        <button id="btnLimpiar" type="button" class="btn-action btn-util btn-util-red">Limpiar</button>
-                    </div>
-                </div>
-                <textarea id="textoEntrada" placeholder="Escribe el texto claro para cifrar... Ej: atbash" class="premium-textarea w-full h-32 text-sm outline-none resize-none custom-scrollbar p-3" style="background-color: var(--input-bg);"></textarea>
-            </div>
-
-            <!-- Salida de Texto -->
-            <div id="panelSalida" class="glass-panel rounded-2xl p-5 flex flex-col border-cyan-500/10">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-cyan-500 uppercase tracking-widest">Texto Cifrado</span>
-                    <button id="btnCopiar" type="button" class="btn-action btn-util">Copiar</button>
-                </div>
-                <textarea id="textoSalida" placeholder="El resultado aparecerá aquí..." class="premium-textarea w-full h-32 text-sm outline-none resize-none custom-scrollbar p-3 text-cyan-500" style="background-color: var(--input-bg);" readonly></textarea>
-            </div>
-        </div>
-
-    </div>
+<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+  <p class="cipher-eyebrow">ca. 500 A.C. — Cifrado hebreo bíblico (Libro de Jeremías)</p>
+  <h1 class="cipher-title">Cifrado Atbash</h1>
+  <p class="cipher-desc">Atbash invierte el orden del alfabeto: la primera letra mapea a la última, la segunda a la penúltima. Originalmente aplicado al alfabeto hebreo (aleph↔tav, beth↔shin, de ahí 'ATBaSh'). Es involutivo. Fórmula: <span class='theory-formula'>C = (N − 1) − P</span></p>
 </div>
 
-<!-- BOTÓN TUTORIAL Y CONTENEDORES MANTENIDOS -->
-<button id="btnTutorial" title="Tutorial interactivo"
-        class="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-cyan-600 hover:bg-cyan-500 text-white w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-[0_0_24px_rgba(6,182,212,.5)] border-2 border-cyan-300/40 transition-all hover:scale-110 cursor-pointer">
-  <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+  <div class="workspace-grid">
+
+    <!-- LEFT: PARAMS -->
+    <div id="panelParametros" class="workspace-panel">
+      <div class="panel-header copper">Parámetros</div>
+      <form id="atbashForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
+        <div>
+          <label class="field-label" for="idioma">Alfabeto</label>
+          <select id="idioma" class="field-select w-full">
+            <option value="ES">Español (Con Ñ)</option>
+            <option value="EN">Inglés (Sin Ñ)</option>
+            <option value="CUSTOM">Personalizado...</option>
+          </select>
+        </div>
+
+        <div id="customAlphabetContainer" class="hidden" style="display:none;">
+          <label class="field-label" for="alfabetoCustom" style="color:var(--copper);">Alfabeto Customizado</label>
+          <input type="text" id="alfabetoCustom" class="field-input w-full uppercase" placeholder="Ej: ABCDEFGHIJKLMN...">
+          <p style="font-size:0.65rem; color:var(--paper-dim); margin-top:0.25rem;">Mínimo 2 caracteres sin repeticiones.</p>
+        </div>
+      </form>
+      
+      <details class="theory-details">
+        <summary>Teoría del Método</summary>
+        <div class="theory-body">
+          Con N=26: A(0)→Z(25), B(1)→Y(24), etc. La operación es su propio inverso — no existe 'descifrado' distinto al cifrado. Aparece en el Libro de Jeremías como obfuscación del nombre 'Babilonia'.
+        </div>
+      </details>
+    </div>
+
+    <!-- CENTER: VISUALIZER -->
+    <div id="panelSimulador" class="workspace-panel">
+      <div class="panel-header copper" style="display:flex; justify-content:space-between;">
+        <span>Mapeo Espejo Atbash</span>
+        <div style="display:flex; gap:0.5rem; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:4px; font-family:var(--font-mono); font-size:0.75rem;">
+          <span id="charIn" style="color:var(--paper); font-weight:bold;">-</span>
+          <span style="color:var(--paper-dim);">↔</span>
+          <span id="charOut" style="color:var(--copper); font-weight:bold;">-</span>
+        </div>
+      </div>
+      <div style="padding:1rem; flex:1; display:flex; flex-direction:column; justify-content:center;">
+        <div class="mapping-scroll" style="background:var(--bg); border:1px solid var(--border-strong); padding:1rem; border-radius:8px;">
+          <div class="mapping-row" id="alfabetoTop" style="margin-bottom:0.75rem;"></div>
+          <div class="mapping-row" id="alfabetoBottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: WORK -->
+    <div class="workspace-right">
+      <div id="panelEntrada" class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header">
+          <span>Texto Original</span>
+          <div style="display:flex; gap:0.35rem;">
+            <button id="btnPegar" class="btn-secondary">Pegar</button>
+            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+          </div>
+        </div>
+        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: atbash"></textarea>
+      </div>
+      <div id="panelSalida" class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header copper">
+          <span>Texto Cifrado</span>
+          <button id="btnCopiar" class="btn-primary">Copiar</button>
+        </div>
+        <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+  <a href="rot47.html">← ROT-47</a>
+  <span class="fn-dot">·</span>
+  <a href="polybios.html">POLYBIOS →</a>
+  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 5 / 6</span>
+</div>
+
+<!-- TUTORIAL -->
+<button id="btnTutorial" title="Tutorial interactivo" class="fixed bottom-6 right-6 z-40 bg-[var(--copper)] hover:opacity-80 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border border-white/20">
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </button>
 
 <div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
 
-<div id="tutorialBubble" class="fixed z-50 w-[270px] sm:w-80 bg-slate-900 border border-cyan-500/40 rounded-2xl shadow-[0_20px_60px_rgba(6,182,212,.35)] transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
-  <div class="bg-gradient-to-r from-slate-800/90 to-slate-800/60 border-b border-cyan-500/25 p-3 flex justify-between items-center">
-    <div class="flex items-center gap-2 text-cyan-400 font-bold uppercase tracking-wider text-[10px]">
+<div id="tutorialBubble" class="fixed z-50 w-80 bg-[var(--bg-elevated)] border border-[var(--copper)] rounded-xl shadow-2xl transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
+  <div class="border-b border-white/10 p-3 flex justify-between items-center bg-black/20">
+    <div class="flex items-center gap-2 text-[var(--copper)] font-bold uppercase tracking-wider text-[10px]">
       <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       Entrenamiento · Atbash
     </div>
-    <button id="btnCerrarTutorial" class="text-slate-500 hover:text-red-400 p-1 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
+    <button id="btnCerrarTutorial" class="text-[var(--paper-dim)] hover:text-white p-1 rounded-lg transition cursor-pointer">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
   </div>
-  <div class="p-4 sm:p-5">
-    <h3 id="tutTitle" class="text-base font-black text-white mb-1.5">Título</h3>
-    <p id="tutText" class="text-slate-300 text-sm leading-relaxed">Texto informativo</p>
+  <div class="p-5">
+    <h3 id="tutTitle" class="text-base font-bold text-[var(--paper)] mb-1.5">Título</h3>
+    <p id="tutText" class="text-[var(--paper-dim)] text-sm leading-relaxed">Texto informativo</p>
   </div>
-  <div class="bg-slate-950/60 px-4 py-3 border-t border-cyan-500/20 flex justify-between items-center gap-2">
+  <div class="bg-black/40 px-4 py-3 border-t border-white/10 flex justify-between items-center gap-2">
     <div class="flex gap-1.5" id="tutDots"></div>
     <div class="flex gap-2">
-      <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-slate-400 hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-slate-800">← Atrás</button>
-      <button id="btnTutNext" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg shadow-cyan-500/25 transition cursor-pointer">Siguiente →</button>
+      <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-[var(--paper-dim)] hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-white/10">← Atrás</button>
+      <button id="btnTutNext" class="px-4 py-1.5 bg-[var(--copper)] hover:opacity-80 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg transition cursor-pointer">Siguiente →</button>
     </div>
   </div>
 </div>
@@ -208,6 +169,5 @@
 <script src="js/ciphers/atbash.js"></script>
 <script src="js/crypto-ux.js"></script>
 <script src="js/pages/atbash-page.js"></script>
-<script src="js/theme.js"></script>
 </body>
 </html>

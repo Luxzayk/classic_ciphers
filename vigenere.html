@@ -1,227 +1,182 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cifrado de Vigenère | CriptoSuite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <link rel="stylesheet" href="css/global.css">
-    <style>
-        .table-shell { overflow: auto; max-height: 400px; scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.3) transparent; }
-        .table-shell::-webkit-scrollbar { width: 6px; height: 6px; }
-        .table-shell::-webkit-scrollbar-track { background: transparent; }
-        .table-shell::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 999px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigenère | CriptoSuite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .table-shell { overflow: auto; max-height: 400px; scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.3) transparent; }
+    .table-shell::-webkit-scrollbar { width: 6px; height: 6px; }
+    .table-shell::-webkit-scrollbar-track { background: transparent; }
+    .table-shell::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 999px; }
 
-        .vig-table { border-collapse: separate; border-spacing: 1px; min-width: max-content; margin: 0 auto; font-family: ui-monospace, monospace; }
-        .vig-table th, .vig-table td { width: 22px; height: 22px; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; border: 1px solid var(--panel-border); }
+    .vig-table { border-collapse: separate; border-spacing: 1px; min-width: max-content; margin: 0 auto; font-family: ui-monospace, monospace; }
+    .vig-table th, .vig-table td { width: 22px; height: 22px; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; border: 1px solid var(--border-strong); }
 
-        .vig-table th { position: sticky; z-index: 3; background: rgba(168, 85, 247, 0.12); color: #a855f7; }
-        .vig-table .top-head { top: 0; }
-        .vig-table .side-head { left: 0; color: #a855f7; background: rgba(168, 85, 247, 0.08); }
-        .vig-table .corner { left: 0; top: 0; z-index: 4; color: var(--text-secondary); background: var(--bg-main); }
+    .vig-table th { position: sticky; z-index: 3; background: rgba(154, 59, 51, 0.12); color: var(--red); }
+    .vig-table .top-head { top: 0; }
+    .vig-table .side-head { left: 0; color: var(--red); background: rgba(154, 59, 51, 0.08); }
+    .vig-table .corner { left: 0; top: 0; z-index: 4; color: var(--paper-dim); background: var(--bg-elevated); }
 
-        .vig-table td { background: rgba(255, 255, 255, 0.8); color: #334155; transition: all 0.1s ease; }
-        .dark .vig-table td { background: rgba(15, 23, 42, 0.6); color: #cbd5e1; }
+    .vig-table td { background: rgba(255, 255, 255, 0.05); color: var(--paper); transition: all 0.1s ease; }
 
-        .vig-table .active-row, .vig-table .active-col { background: rgba(168, 85, 247, 0.12); color: #a855f7; }
-        .dark .vig-table .active-row, .dark .vig-table .active-col { background: rgba(168, 85, 247, 0.18); color: #c084fc; }
+    .vig-table .active-row, .vig-table .active-col { background: rgba(154, 59, 51, 0.12); color: var(--red); }
 
-        .vig-table .active-cell { background: #a855f7; color: #fff; border-color: #a855f7; transform: scale(1.1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.4); z-index: 2; position: relative; }
-        .dark .vig-table .active-cell { background: #c084fc; color: #000; border-color: #c084fc; box-shadow: 0 0 16px rgba(192, 132, 252, 0.5); }
+    .vig-table .active-cell { background: var(--red); color: #fff; border-color: var(--red); transform: scale(1.1); box-shadow: 0 0 12px rgba(154, 59, 51, 0.4); z-index: 2; position: relative; }
 
-        .tutorial-focus {
-            position: relative; z-index: 20;
-            box-shadow: 0 0 0 4px rgba(34,211,238,.5), 0 0 35px rgba(34,211,238,.4);
-            border-radius: 12px; transition: all .3s ease;
-        }
-    </style>
+    .tutorial-focus {
+        position: relative; z-index: 20;
+        box-shadow: 0 0 0 4px rgba(154, 59, 51,.5), 0 0 35px rgba(154, 59, 51,.4);
+        border-radius: 12px; transition: all .3s ease;
+    }
+  </style>
 </head>
-<body class="text-slate-800 dark:text-slate-100 min-h-screen font-sans cyber-grid antialiased transition-colors duration-300">
+<body>
 
-<div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 max-w-xs w-full"></div>
+<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <a href="index.html" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Volver al Menú
-            </a>
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Cliente Estático Activo</span>
-                </div>
-                <button id="theme-toggle" class="p-2 ml-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" aria-label="Cambiar tema">
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.415l-.707-.708a1 1 0 010-1.414zm3.78 4.68a1 1 0 110 2h-1a1 1 0 110-2h1zm-2.32 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 010 1.415l-.707.708a1 1 0 01-1.415-1.414l.707-.707a1 1 0 011.415 0zM2 10a1 1 0 110-2h1a1 1 0 110 2H2zm2.32-4.22a1 1 0 011.415 0l.707.707a1 1 0 11-1.415 1.415l-.707-.707a1 1 0 010-1.415zM10 5a5 5 0 100 10 5 5 0 000-10z"></path>
-                    </svg>
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+<nav class="site-nav">
+  <a href="index.html" class="nav-back">← INICIO</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-page-name">VIGENÈRE</span>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span>Offline</span>
+    <span class="nav-sep">|</span>
+    <span class="badge badge-math" style="font-size:0.55rem; padding:1px 6px;">Polialfabético</span>
+  </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center gap-3 animate-fade-in">
-        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-650 dark:from-purple-400 dark:to-indigo-550 transition-colors whitespace-nowrap">Cifrado de Vigenère</h1>
-        <span class="hidden md:block w-1.5 h-6 bg-slate-300 dark:bg-slate-700 rounded-full flex-shrink-0"></span>
-        <p class="text-slate-500 dark:text-slate-400 text-sm transition-colors">
-            Cifrado polialfabético interactivo basado en una clave repetitiva
-        </p>
-    </header>
-
-    <!-- WORKSPACE DE 3 PANELES -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in-delay">
-        
-        <!-- PANEL IZQUIERDO: CONFIGURACIÓN (col-span-3) -->
-        <div class="lg:col-span-3 flex flex-col gap-6">
-            <div id="panelParametros" class="glass-panel rounded-2xl p-5">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-200 dark:border-slate-800 pb-2 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                    Parámetros
-                </h2>
-                <form id="vigenereForm" class="space-y-4" onsubmit="return false;">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Alfabeto</label>
-                        <select id="idioma" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none focus:border-purple-500">
-                            <option value="ES">Español (Con Ñ)</option>
-                            <option value="EN">Inglés (Sin Ñ)</option>
-                            <option value="CUSTOM">Personalizado...</option>
-                        </select>
-                    </div>
-
-                    <div id="customAlphabetContainer" class="hidden">
-                        <label class="block text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1.5">Alfabeto Customizado</label>
-                        <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGHIJKLMN..." class="w-full bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-500/50 rounded-xl px-3 py-2 text-xs outline-none uppercase">
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Palabra Clave</label>
-                        <input type="text" id="clave" value="SECRETO" placeholder="Escribe la clave..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs outline-none uppercase focus:border-purple-500">
-                    </div>
-                </form>
-
-                <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
-                    <p class="section-title text-purple-500 mb-2">Lectura actual</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-center">
-                            <span class="block text-[8px] text-slate-400 uppercase font-bold mb-0.5">Texto</span>
-                            <span id="charTexto" class="font-mono text-base font-black text-purple-500">-</span>
-                        </div>
-                        <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-center">
-                            <span class="block text-[8px] text-slate-400 uppercase font-bold mb-0.5">Clave</span>
-                            <span id="charClave" class="font-mono text-base font-black text-amber-500">-</span>
-                        </div>
-                        <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-center">
-                            <span class="block text-[8px] text-slate-400 uppercase font-bold mb-0.5">Salida</span>
-                            <span id="charResultado" class="font-mono text-base font-black text-emerald-500">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ACORDEÓN TEORÍA -->
-            <details class="glass-panel rounded-2xl p-5 group cursor-pointer">
-                <summary class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-widest select-none">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Teoría
-                    </span>
-                    <svg class="w-4 h-4 transition-transform duration-250 text-slate-400 group-hover:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </summary>
-                <div class="mt-4 text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
-                    <p>
-                        El Cifrado de Vigenère aplica desplazamientos variables letra por letra en base a los caracteres de una palabra clave.
-                    </p>
-                    <p>
-                        Se utiliza una matriz 2D (Tabla de Vigenère) donde la intersección del carácter del texto y de la clave define el carácter cifrado.
-                    </p>
-                </div>
-            </details>
-        </div>
-
-        <!-- PANEL CENTRAL: VISUALIZADOR INTERACTIVO (col-span-5) -->
-        <div id="panelSimulador" class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col min-h-[380px]">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xs font-bold text-purple-500 uppercase tracking-widest flex items-center gap-1.5">
-                    <span>👁️</span> Tabla de Vigenère
-                </h2>
-                <span id="tableInfo" class="text-[10px] text-slate-400 font-mono"></span>
-            </div>
-
-            <div class="flex-grow overflow-hidden flex flex-col justify-center">
-                <div class="table-shell bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3">
-                    <table id="vigenereTable" class="vig-table"></table>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL DERECHO: TEXTO DE TRABAJO (col-span-4) -->
-        <div class="lg:col-span-4 flex flex-col gap-6">
-            <!-- Entrada de Texto -->
-            <div id="panelEntrada" class="glass-panel rounded-2xl p-5 flex flex-col">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Texto Original</span>
-                    <div class="flex gap-1.5">
-                        <button id="btnPegar" type="button" class="btn-action btn-util">Pegar</button>
-                        <button id="btnLimpiar" type="button" class="btn-action btn-util btn-util-red">Limpiar</button>
-                    </div>
-                </div>
-                <textarea id="textoEntrada" placeholder="Escribe el texto claro para cifrar..." class="premium-textarea w-full h-32 text-sm outline-none resize-none custom-scrollbar p-3" style="background-color: var(--input-bg);"></textarea>
-            </div>
-
-            <!-- Salida de Texto -->
-            <div id="panelSalida" class="glass-panel rounded-2xl p-5 flex flex-col border-purple-500/10">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-purple-500 uppercase tracking-widest">Texto Cifrado</span>
-                    <button id="btnCopiar" type="button" class="btn-action btn-util">Copiar</button>
-                </div>
-                <textarea id="textoSalida" placeholder="El resultado aparecerá aquí..." class="premium-textarea w-full h-32 text-sm outline-none resize-none custom-scrollbar p-3 text-purple-500" style="background-color: var(--input-bg);" readonly></textarea>
-            </div>
-        </div>
-
-    </div>
+<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+  <p class="cipher-eyebrow red">1553 — Giovan Battista Bellaso / Blaise de Vigenère — «le chiffre indéchiffrable»</p>
+  <h1 class="cipher-title">Cifrado de Vigenère</h1>
+  <p class="cipher-desc">Aplica un desplazamiento diferente a cada posición del texto, indexado por una clave que se repite cíclicamente. Cada posición usa un César distinto. Resistió el criptoanálisis durante más de 300 años hasta el método Kasiski (1863). Fórmula: <span class='theory-formula'>C_i = (P_i + K_{i mod m}) mod N</span></p>
 </div>
 
-<!-- BOTÓN TUTORIAL Y CONTENEDORES MANTENIDOS -->
+<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+  <div class="workspace-grid">
+
+    <!-- LEFT: PARAMS -->
+    <div class="workspace-panel">
+      <div class="panel-header red">Parámetros</div>
+      <form id="vigenereForm" style="display:flex; flex-direction:column; gap:1rem;" onsubmit="return false;">
+        <div>
+            <label class="field-label">Alfabeto</label>
+            <select id="idioma" class="field-select">
+                <option value="ES">Español (Con Ñ)</option>
+                <option value="EN">Inglés (Sin Ñ)</option>
+                <option value="CUSTOM">Personalizado...</option>
+            </select>
+        </div>
+
+        <div id="customAlphabetContainer" style="display:none;">
+            <label class="field-label">Alfabeto Customizado</label>
+            <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGHIJKLMN..." class="field-input uppercase">
+        </div>
+
+        <div>
+            <label class="field-label">Palabra Clave</label>
+            <input type="text" id="clave" value="SECRETO" placeholder="Escribe la clave..." class="field-input uppercase">
+        </div>
+      </form>
+
+      <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border);">
+          <p class="field-label" style="color:var(--red);">Lectura actual</p>
+          <div style="display:flex; gap:0.5rem;">
+              <div class="metric-box">
+                  <span class="metric-label">Texto</span>
+                  <span id="charTexto" class="metric-value">-</span>
+              </div>
+              <div class="metric-box">
+                  <span class="metric-label">Clave</span>
+                  <span id="charClave" class="metric-value" style="color:#C1712F;">-</span>
+              </div>
+              <div class="metric-box">
+                  <span class="metric-label">Salida</span>
+                  <span id="charResultado" class="metric-value red">-</span>
+              </div>
+          </div>
+      </div>
+
+      <details class="theory-details">
+        <summary>Teoría del Método</summary>
+        <div class="theory-body">La clave de longitud m se repite cíclicamente. Si la clave es KEY (K=10, E=4, Y=24), entonces la 1ª, 4ª, 7ª... letra usa César K=10; la 2ª, 5ª... K=4; etc. La resistencia depende de que la clave sea larga y no repetitiva.</div>
+      </details>
+    </div>
+
+    <!-- CENTER: VISUALIZER -->
+    <div id="panelSimulador" class="workspace-panel">
+      <div class="panel-header red">
+          <span>Tabla de Vigenère</span>
+          <span id="tableInfo" style="font-size:0.7rem; color:var(--paper-dim); font-family:var(--font-mono);"></span>
+      </div>
+      <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
+          <div class="table-shell" style="border:1px solid var(--border-strong); border-radius:4px; padding:0.5rem; background:var(--bg);">
+              <table id="vigenereTable" class="vig-table"></table>
+          </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: WORK -->
+    <div class="workspace-right">
+      <div class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header">
+          <span>Texto Original</span>
+          <div style="display:flex; gap:0.35rem;">
+            <button id="btnPegar" class="btn-secondary">Pegar</button>
+            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+          </div>
+        </div>
+        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar..."></textarea>
+      </div>
+      
+      <div class="workspace-panel" style="display:flex; flex-direction:column;">
+        <div class="panel-header red">
+          <span>Texto Cifrado</span>
+          <button id="btnCopiar" class="btn-primary">Copiar</button>
+        </div>
+        <textarea id="textoSalida" class="cipher-output output-math" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+  <a href="series.html">← SERIES</a>
+  <span class="fn-dot">·</span>
+  <a href="alberti.html">ALBERTI →</a>
+  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Polialfabético · 1 / 4</span>
+</div>
+
+<!-- TUTORIAL -->
 <button id="btnTutorial" title="Tutorial interactivo"
-        class="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 bg-cyan-600 hover:bg-cyan-500 text-white w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-[0_0_24px_rgba(6,182,212,.5)] border-2 border-cyan-300/40 transition-all hover:scale-110 cursor-pointer">
-  <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        style="position:fixed; bottom:2rem; right:2rem; z-index:40; background:var(--red); color:#fff; width:3rem; height:3rem; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none;">
+  <svg style="width:1.5rem; height:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </button>
 
-<div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
+<div id="tutorialOverlay" style="position:fixed; inset:0; pointer-events:none; z-index:40; display:none; background:transparent;"></div>
 
-<div id="tutorialBubble" class="fixed z-50 w-[270px] sm:w-80 bg-slate-900 border border-cyan-500/40 rounded-2xl shadow-[0_20px_60px_rgba(6,182,212,.35)] transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
-  <div class="bg-gradient-to-r from-slate-800/90 to-slate-800/60 border-b border-cyan-500/25 p-3 flex justify-between items-center">
-    <div class="flex items-center gap-2 text-cyan-400 font-bold uppercase tracking-wider text-[10px]">
-      <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+<div id="tutorialBubble" style="position:fixed; z-index:50; width:320px; background:var(--bg-elevated); border:1px solid var(--red); border-radius:8px; display:none; flex-direction:column; pointer-events:auto; overflow:hidden;">
+  <div style="background:rgba(154, 59, 51, 0.2); border-bottom:1px solid rgba(154, 59, 51, 0.4); padding:0.75rem; display:flex; justify-content:space-between; align-items:center;">
+    <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.65rem; font-weight:bold; color:var(--red); text-transform:uppercase;">
       Entrenamiento · Vigenère
     </div>
-    <button id="btnCerrarTutorial" class="text-slate-500 hover:text-red-400 p-1 rounded-lg hover:bg-slate-700/50 transition cursor-pointer">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-    </button>
+    <button id="btnCerrarTutorial" style="background:none; border:none; color:var(--paper-dim); cursor:pointer;">X</button>
   </div>
-  <div class="p-4 sm:p-5">
-    <h3 id="tutTitle" class="text-base font-black text-white mb-1.5">Título</h3>
-    <p id="tutText" class="text-slate-300 text-sm leading-relaxed">Texto informativo</p>
+  <div style="padding:1rem;">
+    <h3 id="tutTitle" style="font-size:1rem; font-weight:bold; color:var(--paper); margin-bottom:0.5rem; margin-top:0;">Título</h3>
+    <p id="tutText" style="color:var(--paper-dim); font-size:0.85rem; line-height:1.4; margin:0;">Texto informativo</p>
   </div>
-  <div class="bg-slate-950/60 px-4 py-3 border-t border-cyan-500/20 flex justify-between items-center gap-2">
-    <div class="flex gap-1.5" id="tutDots"></div>
-    <div class="flex gap-2">
-      <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-slate-400 hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-slate-800">← Atrás</button>
-      <button id="btnTutNext" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg shadow-cyan-500/25 transition cursor-pointer">Siguiente →</button>
+  <div style="padding:0.75rem 1rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+    <div style="display:flex; gap:0.25rem;" id="tutDots"></div>
+    <div style="display:flex; gap:0.5rem;">
+      <button id="btnTutPrev" style="display:none; background:none; border:none; color:var(--paper-dim); font-size:0.7rem; font-weight:bold; text-transform:uppercase; cursor:pointer;">← Atrás</button>
+      <button id="btnTutNext" class="btn-primary" style="font-size:0.7rem;">Siguiente →</button>
     </div>
   </div>
 </div>
@@ -229,6 +184,5 @@
 <script src="js/ciphers/vigenere.js"></script>
 <script src="js/crypto-ux.js"></script>
 <script src="js/pages/vigenere-page.js"></script>
-<script src="js/theme.js"></script>
 </body>
 </html>

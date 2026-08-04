@@ -1,357 +1,368 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CriptoSuite | Panel de Control de Cifrados</title>
+    <title>CriptoSuite — Plataforma de Cifrados Clásicos</title>
+    <meta name="description" content="Simulación interactiva de 15 algoritmos históricos de criptografía clásica. Ejecución íntegramente en el cliente, sin servidor.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: {} }
-        }
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
 </head>
-<body class="text-slate-800 dark:text-slate-100 min-h-screen font-sans cyber-grid antialiased transition-colors duration-300">
 
-<nav class="border-b border-slate-200 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-teal-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
-                    C
+<body>
+
+    <!-- ═══ NAV ═══════════════════════════════════════════════════════ -->
+    <nav class="site-nav">
+        <span class="nav-brand">CriptoSuite</span>
+        <span class="nav-sep">|</span>
+        <span style="color:var(--paper-dim); font-size:0.6rem; letter-spacing:0.08em;">Sistema de Simulación Criptográfica</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline · v2.5</span>
+            <span class="nav-sep">|</span>
+            <a href="tests.html" style="color:var(--green); font-size:0.6rem; letter-spacing:0.1em;">⚡ TESTS</a>
+        </div>
+    </nav>
+
+    <!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
+    <div style="max-width:1200px; margin:0 auto; padding:3rem 2rem 2.5rem; border-bottom:1px solid var(--border-strong);">
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
+            <div style="flex:1;">
+                <p class="hero-stamp">[ CLASIFICADO · ENTORNO DE SIMULACIÓN · USO ACADÉMICO ]</p>
+                <h1 class="hero-title">Plataforma de<br>Cifrados Clásicos</h1>
+                <p class="hero-subtitle">
+                    15 algoritmos históricos de criptografía implementados y simulados<br> íntegramente del lado del cliente — sin servidor, sin red.
+                </p>
+                <div class="search-wrapper">
+                    <span class="search-prefix">↳</span>
+                    <input type="text" id="searchBar" class="search-input" placeholder="Buscar cifrado...">
                 </div>
-                <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Cripto<span class="text-indigo-500 dark:text-teal-400">Suite</span></span>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Cliente Estático Activo</span>
-                </div>
-                <a href="tests.html" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/25 hover:bg-emerald-200 dark:hover:bg-emerald-500/20 transition-all">
-                    <span>⚡</span> Ejecutar Pruebas
+
+            <!-- Live demo -->
+            <div class="hero-demo-box">
+                <div id="demo-method" class="demo-method-label">[ INICIALIZANDO... ]</div>
+                <span class="demo-plain-text" id="demo-plain"></span>
+                <span class="demo-arrow-glyph">→</span>
+                <span class="demo-cipher-text subst" id="demo-cipher"></span><span class="tw-cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+    <main style="max-width:1200px; margin:0 auto; padding:2rem 2rem 4rem;">
+
+        <!-- ── SUSTITUCIÓN ─────────────────────────────────────────────── -->
+        <section id="sec-subst" class="category-section" style="margin-bottom:3rem;">
+            <div class="category-header subst">
+                <span>[ 01 ]</span>
+                <span>Cifrados de Sustitución</span>
+                <span class="count">6 MÉTODOS</span>
+            </div>
+            <div class="cards-grid">
+
+                <a href="cesar.html" class="cipher-card" data-tags="cesar sustitucion desplazamiento monoalfabetico modulo">
+                    <span class="card-arrow">→</span>
+                    <div class="card-tag"><span class="badge badge-subst">Sustitución</span></div>
+                    <h3 class="card-title">Cifrado César</h3>
+                    <p class="card-desc">Desplazamiento monoalfabético: cada letra avanza K posiciones. El método de cifrado documentado más antiguo del mundo.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">HELLO</div>
+                        <div class="preview-arrow">→ K=3</div>
+                        <div class="preview-cipher subst">KHOOR</div>
+                    </div>
                 </a>
-                <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Equipo 02</span>
 
-                <button id="theme-toggle" class="p-2 ml-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" aria-label="Cambiar tema">
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.415l-.707-.708a1 1 0 010-1.414zm3.78 4.68a1 1 0 110 2h-1a1 1 0 110-2h1zm-2.32 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 010 1.415l-.707.708a1 1 0 01-1.415-1.414l.707-.707a1 1 0 011.415 0zM2 10a1 1 0 110-2h1a1 1 0 110 2H2zm2.32-4.22a1 1 0 011.415 0l.707.707a1 1 0 01-1.415 1.415l-.707-.707a1 1 0 010-1.415zM10 5a5 5 0 100 10 5 5 0 000-10z"></path>
-                    </svg>
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
+                <a href="rot5.html" class="cipher-card" data-tags="rot5 rot-5 sustitucion numerico digitos">
+                    <span class="card-arrow">→</span>
+                    <div class="card-tag"><span class="badge badge-subst">Sustitución</span></div>
+                    <h3 class="card-title">Cifrado ROT-5</h3>
+                    <p class="card-desc">Rotación fija de 5 posiciones sobre dígitos 0–9 exclusivamente. Variante numérica del César para series de datos.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">12345</div>
+                        <div class="preview-arrow">→ rot=5</div>
+                        <div class="preview-cipher subst">67890</div>
+                    </div>
+                </a>
+
+                <a href="rot13.html" class="cipher-card" data-tags="rot13 rot-13 sustitucion rotacion involutivo unix">
+                    <span class="card-arrow">→</span>
+                    <div class="card-tag"><span class="badge badge-subst">Sustitución</span></div>
+                    <h3 class="card-title">Cifrado ROT-13</h3>
+                    <p class="card-desc">Rotación fija de 13 posiciones. Operación involutiva: cifrar dos veces devuelve el original. Popularizado en Usenet.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">MUNDO</div>
+                        <div class="preview-arrow">→ rot=13</div>
+                        <div class="preview-cipher subst">ZHAQB</div>
+                    </div>
+                </a>
+
+                <a href="rot47.html" class="cipher-card" data-tags="rot47 rot-47 sustitucion ascii imprimible simbolos">
+                    <span class="card-arrow">→</span>
+                    <div class="card-tag"><span class="badge badge-subst">Sustitución</span></div>
+                    <h3 class="card-title">Cifrado ROT-47</h3>
+                    <p class="card-desc">Rotación de 47 sobre el rango ASCII 33–126. Cifra simultáneamente letras, números y símbolos de puntuación.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">Hello!</div>
+                        <div class="preview-arrow">→ rot=47</div>
+                        <div class="preview-cipher subst">w6==@P</div>
+                    </div>
+                </a>
+
+                <a href="atbash.html" class="cipher-card" data-tags="atbash sustitucion espejo simetrico hebreo invertido">
+                    <span class="card-arrow">→</span>
+                    <div class="card-tag"><span class="badge badge-subst">Sustitución</span></div>
+                    <h3 class="card-title">Cifrado Atbash</h3>
+                    <p class="card-desc">Sustitución especular: A↔Z, B↔Y, C↔X... De origen hebreo bíblico (ca. 500 A.C.). Operación involutiva.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">HOLA</div>
+                        <div class="preview-arrow">→ espejo</div>
+                        <div class="preview-cipher subst">SLOZ</div>
+                    </div>
+                </a>
+
+                <a href="polybios.html" class="cipher-card" data-tags="polybios sustitucion matricial coordenadas grecia 5x5">
+                    <span class="card-arrow">→</span>
+                    <div class="card-tag"><span class="badge badge-subst">Sustitución</span></div>
+                    <h3 class="card-title">Cuadrado de Polybios</h3>
+                    <p class="card-desc">Cada letra se codifica con sus coordenadas (fila, columna) en una cuadrícula 5×5. Precursor del código Morse y Tap Code.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">HOLA</div>
+                        <div class="preview-arrow">→ 5×5</div>
+                        <div class="preview-cipher subst">23 34 31 11</div>
+                    </div>
+                </a>
+
             </div>
-        </div>
-    </div>
-</nav>
+        </section>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">
-    <div class="mb-10 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-            <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
-                Plataforma de <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-teal-500 dark:from-indigo-400 dark:to-teal-400">Cifrado Avanzado</span>
-            </h1>
-            <p class="text-slate-500 dark:text-slate-400 text-base max-w-xl">
-                Espacio de simulación criptográfica modular ejecutado completamente del lado del cliente.
-            </p>
-        </div>
-        
-        <!-- BARRA DE BÚSQUEDA INTERACTIVA -->
-        <div class="w-full md:w-80 relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </span>
-            <input type="text" id="searchBar" placeholder="Buscar cifrado por nombre o tag..." class="w-full pl-10 pr-4 py-2.5 bg-white/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium transition-all" />
-        </div>
-    </div>
+        <!-- ── TRANSPOSICIÓN ───────────────────────────────────────────── -->
+        <section id="sec-transp" class="category-section" style="margin-bottom:3rem;">
+            <div class="category-header transp">
+                <span>[ 02 ]</span>
+                <span>Cifrados de Transposición</span>
+                <span class="count">5 MÉTODOS</span>
+            </div>
+            <div class="cards-grid">
 
-    <!-- SECCIÓN 1: SUSTITUCIÓN -->
-    <section id="sec-subst" class="mb-10 category-section">
-        <h2 class="text-xs font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-400 mb-4 flex items-center gap-2">
-            <span>🛡️</span> Cifrados de Sustitución
-            <span class="h-[1px] flex-grow bg-indigo-500/10"></span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- César -->
-            <a href="cesar.html" data-tags="cesar sustitucion desplazamiento monoalfabetico modulo 1" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-indigo-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-subst rounded-lg">Sustitución</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado César</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Desplazamiento monoalfabético interactivo con soporte para alfabetos personalizados y claves ajustables.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Módulo 1</span>
-                </div>
-            </a>
+                <a href="escitala.html" class="cipher-card" data-tags="escitala transposicion columnas espartana cilindro baston">
+                    <span class="card-arrow transp">→</span>
+                    <div class="card-tag"><span class="badge badge-transp">Transposición</span></div>
+                    <h3 class="card-title">La Escítala</h3>
+                    <p class="card-desc">Dispositivo espartano (ca. 700 A.C.). El pergamino se enrolla en un bastón; solo quien tiene el mismo diámetro puede leerlo.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">MARCHA AL NORTE</div>
+                        <div class="preview-arrow">→ D=4</div>
+                        <div class="preview-cipher transp">MAAONCRTALHRNE</div>
+                    </div>
+                </a>
 
-            <!-- ROT-5 -->
-            <a href="rot5.html" data-tags="rot5 rot-5 rot 5 sustitucion numerico modulo 2" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-indigo-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-subst rounded-lg">Sustitución</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado ROT-5</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Especializado en números. Rota dígitos (0-9) cinco posiciones hacia adelante.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Numérico</span>
-                </div>
-            </a>
+                <a href="columnas.html" class="cipher-card" data-tags="columnas transposicion matricial clave alfabetica orden">
+                    <span class="card-arrow transp">→</span>
+                    <div class="card-tag"><span class="badge badge-transp">Transposición</span></div>
+                    <h3 class="card-title">Por Columnas</h3>
+                    <p class="card-desc">El texto se inscribe en filas de longitud N y se extrae por columnas en el orden definido por el valor ASCII de la clave.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">SECRETO</div>
+                        <div class="preview-arrow">→ KEY=KEY</div>
+                        <div class="preview-cipher transp">SRTECEO</div>
+                    </div>
+                </a>
 
-            <!-- ROT-13 -->
-            <a href="rot13.html" data-tags="rot13 rot-13 rot 13 sustitucion rotacion fija modulo 3" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-indigo-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-subst rounded-lg">Sustitución</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado ROT-13</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Variante clásica del César con rotación fija de 13 caracteres. Operación involutiva.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Fijo</span>
-                </div>
-            </a>
+                <a href="filas.html" class="cipher-card" data-tags="filas transposicion matricial horizontal ordenacion">
+                    <span class="card-arrow transp">→</span>
+                    <div class="card-tag"><span class="badge badge-transp">Transposición</span></div>
+                    <h3 class="card-title">Por Filas</h3>
+                    <p class="card-desc">El texto se escribe verticalmente en columnas de Nf filas y se lee horizontalmente, reorganizando el orden de los caracteres.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">ATACAR</div>
+                        <div class="preview-arrow">→ Nf=3</div>
+                        <div class="preview-cipher transp">ACAART</div>
+                    </div>
+                </a>
 
-            <!-- ROT-47 -->
-            <a href="rot47.html" data-tags="rot47 rot-47 rot 47 sustitucion ascii modulo 4" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-indigo-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-subst rounded-lg">Sustitución</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado ROT-47</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Rotación ASCII de 47 posiciones que incluye números, letras y caracteres especiales.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">ASCII</span>
-                </div>
-            </a>
+                <a href="grupos.html" class="cipher-card" data-tags="grupos transposicion bloques permutaciones periodo">
+                    <span class="card-arrow transp">→</span>
+                    <div class="card-tag"><span class="badge badge-transp">Transposición</span></div>
+                    <h3 class="card-title">Por Grupos</h3>
+                    <p class="card-desc">Transposición por bloques de periodo P. Las posiciones dentro de cada bloque se permutan según un orden fijo definido por el usuario.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">ABCDEF</div>
+                        <div class="preview-arrow">→ P=3, 3-1-2</div>
+                        <div class="preview-cipher transp">CABFED</div>
+                    </div>
+                </a>
 
-            <!-- Atbash -->
-            <a href="atbash.html" data-tags="atbash atbash sustitucion espejo simetrico modulo 6" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-indigo-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-subst rounded-lg">Sustitución</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado Atbash</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Sustitución en espejo del alfabeto. La primera letra se intercambia por la última.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Simétrico</span>
-                </div>
-            </a>
+                <a href="series.html" class="cipher-card" data-tags="series transposicion matematicas sucesiones periodicas">
+                    <span class="card-arrow transp">→</span>
+                    <div class="card-tag"><span class="badge badge-transp">Transposición</span></div>
+                    <h3 class="card-title">Por Series</h3>
+                    <p class="card-desc">El mensaje se distribuye en sub-mensajes indexados por sucesiones numéricas periódicas libres de colisión.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">MENSAJESECRETO</div>
+                        <div class="preview-arrow">→ serie 1,2,3</div>
+                        <div class="preview-cipher transp">MSR · EAT · NJCEO</div>
+                    </div>
+                </a>
 
-            <!-- Polybios -->
-            <a href="polybios.html" data-tags="polybios polybios sustitucion matricial coordenadas modulo 7" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-indigo-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-subst rounded-lg">Sustitución</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado de Polybios</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Codificación matricial 5x5 que asocia cada carácter con sus coordenadas (Fila, Columna).</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Matriz 5x5</span>
-                </div>
-            </a>
-        </div>
-    </section>
+            </div>
+        </section>
 
-    <!-- SECCIÓN 2: TRANSPOSICIÓN -->
-    <section id="sec-transp" class="mb-10 category-section">
-        <h2 class="text-xs font-bold uppercase tracking-widest text-teal-500 dark:text-teal-400 mb-4 flex items-center gap-2">
-            <span>🔄</span> Cifrados de Transposición
-            <span class="h-[1px] flex-grow bg-teal-500/10"></span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Escítala -->
-            <a href="escitala.html" data-tags="escitala escitala transposición columnas espartana 3d modulo 5" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-teal-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-teal-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-transp rounded-lg">Transposición</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">La Escítala</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Cifrado militar espartano. Reordena caracteres simulando el enrollado en un cilindro 3D.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Cilindro 3D</span>
-                </div>
-            </a>
+        <!-- ── POLIALFABÉTICO ──────────────────────────────────────────── -->
+        <section id="sec-math" class="category-section" style="margin-bottom:3rem;">
+            <div class="category-header math">
+                <span>[ 03 ]</span>
+                <span>Cifrados Matemáticos y Polialfabéticos</span>
+                <span class="count">4 MÉTODOS</span>
+            </div>
+            <div class="cards-grid">
 
-            <!-- Columnas -->
-            <a href="columnas.html" data-tags="columnas columnas transposición matricial clave alfabetica modulo 12" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-teal-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-teal-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-transp rounded-lg">Transposición</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Por Columnas</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Transposición matricial que reorganiza el texto verticalmente por columnas simples o con clave.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Matriz</span>
-                </div>
-            </a>
+                <a href="vigenere.html" class="cipher-card" data-tags="vigenere polialfabetico clave repetida indescifrable">
+                    <span class="card-arrow math">→</span>
+                    <div class="card-tag"><span class="badge badge-math">Polialfabético</span></div>
+                    <h3 class="card-title">Cifrado Vigenère</h3>
+                    <p class="card-desc">Múltiples alfabetos César indexados por una clave repetida. Resistió 300 años de criptoanálisis: «le chiffre indéchiffrable».</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">HOLA</div>
+                        <div class="preview-arrow">→ KEY=KEY</div>
+                        <div class="preview-cipher math">RSJK</div>
+                    </div>
+                </a>
 
-            <!-- Filas -->
-            <a href="filas.html" data-tags="filas filas transposición matricial ordenacion modulo 13" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-teal-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-teal-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-transp rounded-lg">Transposición</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Por Filas</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Reorganización horizontal del criptograma mediante matrices dinámicas.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Horizontal</span>
-                </div>
-            </a>
+                <a href="alberti.html" class="cipher-card" data-tags="alberti polialfabetico disco anillo mecanico 1466">
+                    <span class="card-arrow math">→</span>
+                    <div class="card-tag"><span class="badge badge-math">Polialfabético</span></div>
+                    <h3 class="card-title">Disco de Alberti</h3>
+                    <p class="card-desc">Primer dispositivo criptográfico mecánico (1467, Leon Battista Alberti). El disco interno rota cada cierto número de letras.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">HOLA</div>
+                        <div class="preview-arrow">→ anillo A→a, p=3</div>
+                        <div class="preview-cipher math">XBAE</div>
+                    </div>
+                </a>
 
-            <!-- Grupos -->
-            <a href="grupos.html" data-tags="grupos grupos transposición bloques permutaciones modulo 14" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-teal-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-teal-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-transp rounded-lg">Transposición</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Por Grupos</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Transposición por bloques con longitud de periodo fija y trazado interactivo de flujos SVG.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Bloques</span>
-                </div>
-            </a>
+                <a href="playfair.html" class="cipher-card" data-tags="playfair digrafos pares polialfabetico 5x5 guerra">
+                    <span class="card-arrow math">→</span>
+                    <div class="card-tag"><span class="badge badge-math">Polialfabético</span></div>
+                    <h3 class="card-title">Cifrado Playfair</h3>
+                    <p class="card-desc">Opera sobre pares de letras (dígrafos) en una cuadrícula 5×5. Usado extensivamente por los Aliados en las Guerras Mundiales.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">HOLA</div>
+                        <div class="preview-arrow">→ KEY=PLAYFAIR</div>
+                        <div class="preview-cipher math">CFIM</div>
+                    </div>
+                </a>
 
-            <!-- Series -->
-            <a href="series.html" data-tags="series series transposición series matematicas modulo 15" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-teal-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-teal-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-transp rounded-lg">Transposición</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Por Series</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">División del mensaje en submensajes generados por sucesiones numéricas periódicas libres de colisión.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Series Matemáticas</span>
-                </div>
-            </a>
-        </div>
-    </section>
+                <a href="hill.html" class="cipher-card" data-tags="hill algebra lineal matriz invertible determinante 1929">
+                    <span class="card-arrow math">→</span>
+                    <div class="card-tag"><span class="badge badge-math">Matemático</span></div>
+                    <h3 class="card-title">Cifrado de Hill</h3>
+                    <p class="card-desc">Primer cifrado poligráfico (Lester S. Hill, 1929). Multiplica vectores de texto por una matriz clave invertible en módulo N.</p>
+                    <div class="card-preview">
+                        <div class="preview-plain">AB</div>
+                        <div class="preview-arrow">→ K=[[3,3],[2,5]]</div>
+                        <div class="preview-cipher math">DF</div>
+                    </div>
+                </a>
 
-    <!-- SECCIÓN 3: MATEMÁTICOS Y POLIALFABÉTICOS -->
-    <section id="sec-math" class="mb-10 category-section">
-        <h2 class="text-xs font-bold uppercase tracking-widest text-purple-500 dark:text-purple-400 mb-4 flex items-center gap-2">
-            <span>🧠</span> Cifrados Matemáticos y Polialfabéticos
-            <span class="h-[1px] flex-grow bg-purple-500/10"></span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Vigenère -->
-            <a href="vigenere.html" data-tags="vigenere vigenere polialfabetico clave alfabetica modulo 8" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-purple-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-purple-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-math rounded-lg">Polialfabético</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado de Vigenère</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Cifrado polialfabético interactivo con matriz completa de desplazamientos en tiempo real.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Clave Alfabética</span>
-                </div>
-            </a>
+            </div>
+        </section>
 
-            <!-- Alberti -->
-            <a href="alberti.html" data-tags="alberti alberti polialfabetico discos anillos concentricos mecanico modulo 9" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-purple-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-purple-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-math rounded-lg">Polialfabético</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Disco de Alberti</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Simulación mecánica e interactiva del disco concéntrico de Alberti con periodo variable.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Discos SVG</span>
-                </div>
-            </a>
+    </main>
 
-            <!-- Playfair -->
-            <a href="playfair.html" data-tags="playfair playfair digrafos polialfabetico matriz 5x5 modulo 10" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-purple-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-purple-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-math rounded-lg">Polialfabético</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado Playfair</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Cifrado polialfabético simétrico basado en dígrafos en una cuadrícula interactiva de 5x5.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Dígrafos</span>
-                </div>
-            </a>
+    <footer style="border-top:1px solid var(--border); padding:1rem 2rem; font-family:var(--font-mono); font-size:0.6rem; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.1em; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+        <span>Proyecto Universitario de Criptografía I © 2026</span>
+        <span style="color:var(--border-strong);">By LuxuDev</span>
+    </footer>
 
-            <!-- Hill -->
-            <a href="hill.html" data-tags="hill hill algebra lineal matriz invertible determinante modulo 11" class="cipher-card glass-panel group rounded-2xl p-6 relative overflow-hidden flex flex-col h-full hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-28 h-28 bg-purple-500/5 rounded-full blur-2xl -mr-8 -mt-8 transition-all group-hover:bg-purple-500/10"></div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider badge-math rounded-lg">Matemático</span>
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Cifrado de Hill</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 flex-grow leading-relaxed">Cifrado poligráfico por bloques mediante matrices invertibles y álgebra lineal modular.</p>
-                <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/50 flex gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/50 px-2 py-0.5 rounded">Matrices</span>
-                </div>
-            </a>
-        </div>
-    </section>
-</main>
+    <script>
+        // ─── SEARCH ──────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchBar = document.getElementById('searchBar');
+            const cards = document.querySelectorAll('.cipher-card');
+            const sections = document.querySelectorAll('.category-section');
 
-<footer class="border-t border-slate-200 dark:border-slate-800/60 mt-12 py-8 text-center text-slate-500 text-sm animate-fade-in transition-colors">
-    <p>Proyecto Universitario de Criptografía Aplicada &copy; 2026</p>
-    <p class="mt-1 text-xs text-slate-400">Diseño UX/UI Premium Reorganizado - Lógica Offline</p>
-</footer>
-
-<script src="js/theme.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const searchBar = document.getElementById("searchBar");
-        const cards = document.querySelectorAll(".cipher-card");
-        const sections = document.querySelectorAll(".category-section");
-
-        searchBar.addEventListener("input", (e) => {
-            const query = e.target.value.toLowerCase().trim();
-
-            cards.forEach(card => {
-                const tags = card.getAttribute("data-tags") || "";
-                const title = card.querySelector("h3").innerText.toLowerCase();
-                const desc = card.querySelector("p").innerText.toLowerCase();
-                
-                if (tags.includes(query) || title.includes(query) || desc.includes(query)) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-
-            // Hide section headings if no cards are visible inside them
-            sections.forEach(sec => {
-                const visibleCards = sec.querySelectorAll(".cipher-card[style='display: flex;']");
-                const hiddenCards = sec.querySelectorAll(".cipher-card[style='display: none;']");
-                
-                if (hiddenCards.length === sec.querySelectorAll(".cipher-card").length) {
-                    sec.style.display = "none";
-                } else {
-                    sec.style.display = "block";
-                }
+            searchBar.addEventListener('input', e => {
+                const q = e.target.value.toLowerCase().trim();
+                cards.forEach(card => {
+                    const tags = card.dataset.tags || '';
+                    const text = card.textContent.toLowerCase();
+                    card.style.display = (!q || tags.includes(q) || text.includes(q)) ? '' : 'none';
+                });
+                sections.forEach(sec => {
+                    const vis = [...sec.querySelectorAll('.cipher-card')].some(c => c.style.display !== 'none');
+                    sec.style.display = vis ? '' : 'none';
+                });
             });
         });
-    });
-</script>
+
+        // ─── HERO TYPEWRITER ─────────────────────────────────────────────
+        const DEMOS = [{
+            label: 'CÉSAR · K=3',
+            plain: 'HELLO WORLD',
+            cipher: 'KHOOR ZRUOG',
+            cat: 'subst'
+        }, {
+            label: 'ROT-13 · INVOLUTIVO',
+            plain: 'MENSAJE SECRETO',
+            cipher: 'ZRAFNWR FRPERGB',
+            cat: 'subst'
+        }, {
+            label: 'ESCÍTALA · D=4',
+            plain: 'MARCHA AL NORTE',
+            cipher: 'MAAONCRTALHRNE',
+            cat: 'transp'
+        }, {
+            label: 'VIGENÈRE · KEY=KEY',
+            plain: 'HELLO WORLD',
+            cipher: 'RIJVS UYVJN',
+            cat: 'math'
+        }, ];
+
+        let demoIdx = 0;
+        let running = true;
+
+        function typeEl(el, text, speed) {
+            return new Promise(resolve => {
+                el.textContent = '';
+                if (!text) return resolve();
+                let i = 0;
+                const iv = setInterval(() => {
+                    el.textContent += text[i++];
+                    if (i >= text.length) {
+                        clearInterval(iv);
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+
+        async function runDemo() {
+            while (running) {
+                const d = DEMOS[demoIdx % DEMOS.length];
+                const mEl = document.getElementById('demo-method');
+                const pEl = document.getElementById('demo-plain');
+                const cEl = document.getElementById('demo-cipher');
+                if (!mEl) break;
+
+                mEl.textContent = '[ ' + d.label + ' ]';
+                cEl.className = 'demo-cipher-text ' + d.cat;
+                pEl.textContent = '';
+                cEl.textContent = '';
+
+                await typeEl(pEl, d.plain, 55);
+                await new Promise(r => setTimeout(r, 350));
+                await typeEl(cEl, d.cipher, 40);
+                await new Promise(r => setTimeout(r, 2400));
+                demoIdx++;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => setTimeout(runDemo, 700));
+    </script>
 </body>
+
 </html>
