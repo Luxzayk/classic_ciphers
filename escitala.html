@@ -1,219 +1,256 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escítala | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    .scene-3d { perspective: 1200px; }
-    .cylinder-3d {
-        transform-style: preserve-3d;
-        transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), width 0.3s, height 0.3s;
-    }
-    .face-3d { backface-visibility: hidden; position: absolute; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escítala | CriptoSuite</title>
+    <meta name="description" content="Descubre la Escítala espartana y aprende a cifrar mensajes con un cilindro.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .scene-3d {
+            perspective: 1200px;
+        }
+        
+        .cylinder-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), width 0.3s, height 0.3s;
+        }
+        
+        .face-3d {
+            backface-visibility: hidden;
+            position: absolute;
+        }
+        
+        .cinta-cell {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-strong);
+            color: var(--paper-dim);
+            transition: all 0.2s ease;
+        }
+        
+        .cinta-cell.highlighted {
+            background: rgba(76, 107, 84, 0.2) !important;
+            border-color: var(--green) !important;
+            color: var(--green) !important;
+            transform: translateY(-2px);
+        }
+        
+        .baston-char {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .baston-char.highlighted {
+            color: var(--green) !important;
+            transform: scale(1.3);
+            z-index: 10;
+        }
+        
+        .tutorial-focus {
+            position: relative;
+            z-index: 20;
+            box-shadow: 0 0 0 4px var(--green);
+            border-radius: 4px;
+            transition: all .3s ease;
+        }
+        
+        .view-btn {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--paper-dim);
+            transition: all 0.2s;
+        }
+        
+        .view-btn.active {
+            background: var(--green);
+            color: var(--bg);
+            border-color: var(--green);
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
 
-    .cinta-cell {
-        background: var(--bg-elevated);
-        border: 1px solid var(--border-strong);
-        color: var(--paper-dim);
-        transition: all 0.2s ease;
-    }
-    .cinta-cell.highlighted {
-        background: rgba(76, 107, 84, 0.2) !important;
-        border-color: var(--green) !important;
-        color: var(--green) !important;
-        transform: translateY(-2px);
-    }
-    .baston-char { transition: all 0.2s ease; cursor: pointer; display: inline-block; }
-    .baston-char.highlighted {
-        color: var(--green) !important;
-        transform: scale(1.3); z-index: 10;
-    }
-
-    .tutorial-focus {
-        position: relative; z-index: 20;
-        box-shadow: 0 0 0 4px var(--green);
-        border-radius: 4px; transition: all .3s ease;
-    }
-
-    .view-btn { padding: 4px 10px; font-size: 0.75rem; font-family: var(--font-mono); text-transform: uppercase; cursor: pointer; border: 1px solid transparent; background: transparent; color: var(--paper-dim); transition: all 0.2s;}
-    .view-btn.active { background: var(--green); color: var(--bg); border-color: var(--green); }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">ESCÍTALA</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">ESCÍTALA</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow green">ca. 700 A.C. — Eforos espartanos, comunicaciones militares de Esparta</p>
-  <h1 class="cipher-title">Cifrado Escítala</h1>
-  <p class="cipher-desc">El mensaje se enrolla en una cinta sobre un bastón de diámetro D. Al desenrollar la cinta, las letras quedan desordenadas. Solo quien posea un bastón del mismo diámetro puede leerlo al volver a enrollar. <span class="theory-formula">Equivale a una transposición por columnas de ancho D.</span></p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow green">ca. 700 A.C. — Eforos espartanos, comunicaciones militares de Esparta</p>
+        <h1 class="cipher-title">Cifrado Escítala</h1>
+        <p class="cipher-desc">El mensaje se enrolla en una cinta sobre un bastón de diámetro D. Al desenrollar la cinta, las letras quedan desordenadas. Solo quien posea un bastón del mismo diámetro puede leerlo al volver a enrollar. <span class="theory-formula">Equivale a una transposición por columnas de ancho D.</span></p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div class="workspace-panel">
-      <div class="panel-header green">Parámetros</div>
-      
-      <form id="escitalaForm" class="p-4 flex flex-col gap-4" onsubmit="return false;">
-        <div>
-          <label class="field-label">Operación</label>
-          <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
-            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header green">Parámetros</div>
+
+                <form id="escitalaForm" class="p-4 flex flex-col gap-4" onsubmit="return false;">
+                    <div>
+                        <label class="field-label">Operación</label>
+                        <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+                            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
               <input type="radio" name="operacion" value="CIFRAR" checked> Cifrar
             </label>
-            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
+                            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
               <input type="radio" name="operacion" value="DESCIFRAR"> Descifrar
             </label>
-          </div>
-        </div>
+                        </div>
+                    </div>
 
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="field-label">Diámetro Bastón</label>
-            <span id="claveValueDisplay" class="value-display" style="color:var(--green);">4</span>
-          </div>
-          <input type="range" id="clave" min="2" max="15" value="4" class="w-full mt-2" style="--fill:15%;">
-        </div>
-      </form>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label class="field-label">Diámetro Bastón</label>
+                            <span id="claveValueDisplay" class="value-display" style="color:var(--green);">4</span>
+                        </div>
+                        <input type="range" id="clave" min="2" max="15" value="4" class="w-full mt-2" style="--fill:15%;">
+                    </div>
+                </form>
 
-      <details class="theory-details">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">
-          <p>El bastón define el número de columnas D. El mensaje se escribe en la cinta enrollada (fila por fila a lo largo del cilindro) y se lee al desenrollar (columna por columna).</p>
-          <p>El criptoanálisis requiere adivinar D.</p>
-        </div>
-      </details>
-    </div>
-
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" class="workspace-panel">
-      <div class="panel-header green" style="display:flex; justify-content:space-between; align-items:center;">
-        <span>Visualizador 3D</span>
-        <div style="display:flex; gap:0.5rem;">
-          <button id="btnViewHoriz" class="view-btn active">Horiz</button>
-          <button id="btnViewVert" class="view-btn">Vert</button>
-          <button id="btnAutoGiro" class="btn-secondary" style="font-size:0.7rem; padding:2px 6px;">Girar</button>
-        </div>
-      </div>
-      
-      <div class="p-4 flex flex-col gap-4">
-        <div id="sceneContainer" class="scene-3d w-full flex items-center justify-center relative overflow-hidden" style="min-height: 180px;">
-          <div id="cylinder" class="cylinder-3d flex justify-center items-center relative w-full h-[40px]"></div>
-        </div>
-
-        <div style="display:flex; gap:1rem; font-family:var(--font-mono); font-size:0.75rem; justify-content:center;">
-          <div class="metric-box">
-            <span class="metric-label">Longitud</span>
-            <span id="statLongitud" class="metric-value">0</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Caras</span>
-            <span id="statVueltas" class="metric-value green">4</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Relleno X</span>
-            <span id="statRelleno" class="metric-value" style="color:var(--red);">0</span>
-          </div>
-        </div>
-
-        <div id="panelCinta" style="margin-top:1rem;">
-          <label class="field-label" style="margin-bottom:0.5rem; display:block;">Cinta Desenrollada</label>
-          <div style="overflow-x:auto; padding:0.5rem; border:1px solid var(--border); background:rgba(0,0,0,0.2);">
-            <div id="cintaDesenrollada" style="display:flex; gap:0.25rem; min-width:max-content; align-items:center;">
-              <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--paper-dim);">Esperando entrada...</span>
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        <p>El bastón define el número de columnas D. El mensaje se escribe en la cinta enrollada (fila por fila a lo largo del cilindro) y se lee al desenrollar (columna por columna).</p>
+                        <p>El criptoanálisis requiere adivinar D.</p>
+                    </div>
+                </details>
             </div>
-          </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" class="workspace-panel">
+                <div class="panel-header green" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Visualizador 3D</span>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button id="btnViewHoriz" class="view-btn active">Horiz</button>
+                        <button id="btnViewVert" class="view-btn">Vert</button>
+                        <button id="btnAutoGiro" class="btn-secondary" style="font-size:0.7rem; padding:2px 6px;">Girar</button>
+                    </div>
+                </div>
+
+                <div class="p-4 flex flex-col gap-4">
+                    <div id="sceneContainer" class="scene-3d w-full flex items-center justify-center relative overflow-hidden" style="min-height: 180px;">
+                        <div id="cylinder" class="cylinder-3d flex justify-center items-center relative w-full h-[40px]"></div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; font-family:var(--font-mono); font-size:0.75rem; justify-content:center;">
+                        <div class="metric-box">
+                            <span class="metric-label">Longitud</span>
+                            <span id="statLongitud" class="metric-value">0</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Caras</span>
+                            <span id="statVueltas" class="metric-value green">4</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Relleno X</span>
+                            <span id="statRelleno" class="metric-value" style="color:var(--red);">0</span>
+                        </div>
+                    </div>
+
+                    <div id="panelCinta" style="margin-top:1rem;">
+                        <label class="field-label" style="margin-bottom:0.5rem; display:block;">Cinta Desenrollada</label>
+                        <div style="overflow-x:auto; padding:0.5rem; border:1px solid var(--border); background:rgba(0,0,0,0.2);">
+                            <div id="cintaDesenrollada" style="display:flex; gap:0.25rem; min-width:max-content; align-items:center;">
+                                <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--paper-dim);">Esperando entrada...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: escitala"></textarea>
+                </div>
+
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header green">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-      </div>
     </div>
 
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: escitala"></textarea>
-      </div>
-      
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header green">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="polybios.html">← POLYBIOS</a>
+        <span class="fn-dot">·</span>
+        <a href="columnas.html">COLUMNAS →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 1 / 5</span>
     </div>
 
-  </div>
-</div>
-
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="polybios.html">← POLYBIOS</a>
-  <span class="fn-dot">·</span>
-  <a href="columnas.html">COLUMNAS →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 1 / 5</span>
-</div>
-
-<button id="btnTutorial" title="Tutorial interactivo" style="position:fixed; bottom:2rem; right:2rem; background:var(--bg-elevated); border:1px solid var(--green); color:var(--green); width:3rem; height:3rem; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:40;">
+    <button id="btnTutorial" title="Tutorial interactivo" style="position:fixed; bottom:2rem; right:2rem; background:var(--bg-elevated); border:1px solid var(--green); color:var(--green); width:3rem; height:3rem; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:40;">
   ?
 </button>
 
-<div id="tutorialOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:40; display:none;"></div>
+    <div id="tutorialOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:40; display:none;"></div>
 
-<div id="tutorialBubble" style="position:fixed; z-index:50; width:300px; background:var(--bg-elevated); border:1px solid var(--green); display:none; flex-direction:column; padding:1rem; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
-  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:0.5rem;">
-    <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--green);">Entrenamiento</span>
-    <button id="btnCerrarTutorial" style="background:transparent; border:none; color:var(--paper); cursor:pointer;">X</button>
-  </div>
-  <div>
-    <h3 id="tutTitle" style="font-family:var(--font-mono); margin-bottom:0.5rem; font-size:0.9rem;">Paso 1</h3>
-    <p id="tutText" style="font-size:0.8rem; line-height:1.4;">Instrucciones aquí…</p>
-  </div>
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; pt:0.5rem; border-top:1px solid var(--border);">
-    <div id="tutDots" style="display:flex; gap:0.25rem;"></div>
-    <div style="display:flex; gap:0.5rem;">
-      <button id="btnTutPrev" class="btn-secondary" style="font-size:0.7rem; display:none;">← Atrás</button>
-      <button id="btnTutNext" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg); font-size:0.7rem;">Siguiente →</button>
+    <div id="tutorialBubble" style="position:fixed; z-index:50; width:300px; background:var(--bg-elevated); border:1px solid var(--green); display:none; flex-direction:column; padding:1rem; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:0.5rem;">
+            <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--green);">Entrenamiento</span>
+            <button id="btnCerrarTutorial" style="background:transparent; border:none; color:var(--paper); cursor:pointer;">X</button>
+        </div>
+        <div>
+            <h3 id="tutTitle" style="font-family:var(--font-mono); margin-bottom:0.5rem; font-size:0.9rem;">Paso 1</h3>
+            <p id="tutText" style="font-size:0.8rem; line-height:1.4;">Instrucciones aquí…</p>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; pt:0.5rem; border-top:1px solid var(--border);">
+            <div id="tutDots" style="display:flex; gap:0.25rem;"></div>
+            <div style="display:flex; gap:0.5rem;">
+                <button id="btnTutPrev" class="btn-secondary" style="font-size:0.7rem; display:none;">← Atrás</button>
+                <button id="btnTutNext" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg); font-size:0.7rem;">Siguiente →</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<script src="js/ciphers/escitala.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/escitala-page.js"></script>
-<script>
-document.querySelectorAll('input[type=range]').forEach(s => {
-    function sync() {
-        const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
-        s.style.setProperty('--fill', pct);
-    }
-    s.addEventListener('input', sync); sync();
-});
-</script>
+    <script src="js/ciphers/escitala.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/escitala-page.js"></script>
+    <script>
+        document.querySelectorAll('input[type=range]').forEach(s => {
+            function sync() {
+                const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
+                s.style.setProperty('--fill', pct);
+            }
+            s.addEventListener('input', sync);
+            sync();
+        });
+    </script>
 </body>
-</html>
 
+</html>

@@ -1,174 +1,221 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ATBASH | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    .mapping-scroll { overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--copper) transparent; }
-    .mapping-scroll::-webkit-scrollbar { height: 6px; }
-    .mapping-scroll::-webkit-scrollbar-track { background: transparent; }
-    .mapping-scroll::-webkit-scrollbar-thumb { background: var(--copper); border-radius: 999px; }
-    .mapping-row { display: flex; gap: 4px; min-width: max-content; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATBASH | CriptoSuite</title>
+    <meta name="description" content="Prueba el cifrado Atbash, una sustitución simple que invierte el alfabeto.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .mapping-scroll {
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--copper) transparent;
+        }
+        
+        .mapping-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .mapping-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .mapping-scroll::-webkit-scrollbar-thumb {
+            background: var(--copper);
+            border-radius: 999px;
+        }
+        
+        .mapping-row {
+            display: flex;
+            gap: 4px;
+            min-width: max-content;
+        }
+        
+        .letter-cell {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            border: 1px solid var(--border-strong);
+            transition: all 0.2s;
+        }
+        
+        .base-cell {
+            color: var(--paper);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .cipher-cell {
+            color: var(--copper);
+            background: rgba(193, 113, 47, 0.08);
+        }
+        
+        .letter-cell.active-base {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--paper);
+            transform: translateY(-2px);
+        }
+        
+        .letter-cell.active-cipher {
+            background: rgba(193, 113, 47, 0.2);
+            border-color: var(--copper);
+            transform: translateY(2px);
+        }
+        
+        .tutorial-focus {
+            position: relative;
+            z-index: 20;
+            box-shadow: 0 0 0 4px rgba(193, 113, 47, 0.5), 0 0 35px rgba(193, 113, 47, 0.4);
+            border-radius: 12px;
+            transition: all .3s ease;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
 
-    .letter-cell {
-        width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-        border-radius: 4px; font-family: var(--font-mono);
-        font-size: 14px; border: 1px solid var(--border-strong); transition: all 0.2s;
-    }
-
-    .base-cell { color: var(--paper); background: rgba(255,255,255,0.03); }
-    .cipher-cell { color: var(--copper); background: rgba(193,113,47,0.08); }
-
-    .letter-cell.active-base { background: rgba(255,255,255,0.1); border-color: var(--paper); transform: translateY(-2px); }
-    .letter-cell.active-cipher { background: rgba(193,113,47,0.2); border-color: var(--copper); transform: translateY(2px); }
-
-    .tutorial-focus {
-        position: relative; z-index: 20;
-        box-shadow: 0 0 0 4px rgba(193,113,47,0.5), 0 0 35px rgba(193,113,47,0.4);
-        border-radius: 12px; transition: all .3s ease;
-    }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">ATBASH</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">ATBASH</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow">ca. 500 A.C. — Cifrado hebreo bíblico (Libro de Jeremías)</p>
-  <h1 class="cipher-title">Cifrado Atbash</h1>
-  <p class="cipher-desc">Atbash invierte el orden del alfabeto: la primera letra mapea a la última, la segunda a la penúltima. Originalmente aplicado al alfabeto hebreo (aleph↔tav, beth↔shin, de ahí 'ATBaSh'). Es involutivo. Fórmula: <span class='theory-formula'>C = (N − 1) − P</span></p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow">ca. 500 A.C. — Cifrado hebreo bíblico (Libro de Jeremías)</p>
+        <h1 class="cipher-title">Cifrado Atbash</h1>
+        <p class="cipher-desc">Atbash invierte el orden del alfabeto: la primera letra mapea a la última, la segunda a la penúltima. Originalmente aplicado al alfabeto hebreo (aleph↔tav, beth↔shin, de ahí 'ATBaSh'). Es involutivo. Fórmula: <span class='theory-formula'>C = (N − 1) − P</span></p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div id="panelParametros" class="workspace-panel">
-      <div class="panel-header copper">Parámetros</div>
-      <form id="atbashForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
-        <div>
-          <label class="field-label" for="idioma">Alfabeto</label>
-          <select id="idioma" class="field-select w-full">
+            <!-- LEFT: PARAMS -->
+            <div id="panelParametros" class="workspace-panel">
+                <div class="panel-header copper">Parámetros</div>
+                <form id="atbashForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
+                    <div>
+                        <label class="field-label" for="idioma">Alfabeto</label>
+                        <select id="idioma" class="field-select w-full">
             <option value="ES">Español (Con Ñ)</option>
             <option value="EN">Inglés (Sin Ñ)</option>
             <option value="CUSTOM">Personalizado...</option>
           </select>
-        </div>
+                    </div>
 
-        <div id="customAlphabetContainer" class="hidden" style="display:none;">
-          <label class="field-label" for="alfabetoCustom" style="color:var(--copper);">Alfabeto Customizado</label>
-          <input type="text" id="alfabetoCustom" class="field-input w-full uppercase" placeholder="Ej: ABCDEFGHIJKLMN...">
-          <p style="font-size:0.65rem; color:var(--paper-dim); margin-top:0.25rem;">Mínimo 2 caracteres sin repeticiones.</p>
+                    <div id="customAlphabetContainer" class="hidden" style="display:none;">
+                        <label class="field-label" for="alfabetoCustom" style="color:var(--copper);">Alfabeto Customizado</label>
+                        <input type="text" id="alfabetoCustom" class="field-input w-full uppercase" placeholder="Ej: ABCDEFGHIJKLMN...">
+                        <p style="font-size:0.65rem; color:var(--paper-dim); margin-top:0.25rem;">Mínimo 2 caracteres sin repeticiones.</p>
+                    </div>
+                </form>
+
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        Con N=26: A(0)→Z(25), B(1)→Y(24), etc. La operación es su propio inverso — no existe 'descifrado' distinto al cifrado. Aparece en el Libro de Jeremías como obfuscación del nombre 'Babilonia'.
+                    </div>
+                </details>
+            </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" class="workspace-panel">
+                <div class="panel-header copper" style="display:flex; justify-content:space-between;">
+                    <span>Mapeo Espejo Atbash</span>
+                    <div style="display:flex; gap:0.5rem; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:4px; font-family:var(--font-mono); font-size:0.75rem;">
+                        <span id="charIn" style="color:var(--paper); font-weight:bold;">-</span>
+                        <span style="color:var(--paper-dim);">↔</span>
+                        <span id="charOut" style="color:var(--copper); font-weight:bold;">-</span>
+                    </div>
+                </div>
+                <div style="padding:1rem; flex:1; display:flex; flex-direction:column; justify-content:center;">
+                    <div class="mapping-scroll" style="background:var(--bg); border:1px solid var(--border-strong); padding:1rem; border-radius:8px;">
+                        <div class="mapping-row" id="alfabetoTop" style="margin-bottom:0.75rem;"></div>
+                        <div class="mapping-row" id="alfabetoBottom"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div id="panelEntrada" class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: atbash"></textarea>
+                </div>
+                <div id="panelSalida" class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header copper">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-      </form>
-      
-      <details class="theory-details">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">
-          Con N=26: A(0)→Z(25), B(1)→Y(24), etc. La operación es su propio inverso — no existe 'descifrado' distinto al cifrado. Aparece en el Libro de Jeremías como obfuscación del nombre 'Babilonia'.
-        </div>
-      </details>
     </div>
 
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" class="workspace-panel">
-      <div class="panel-header copper" style="display:flex; justify-content:space-between;">
-        <span>Mapeo Espejo Atbash</span>
-        <div style="display:flex; gap:0.5rem; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:4px; font-family:var(--font-mono); font-size:0.75rem;">
-          <span id="charIn" style="color:var(--paper); font-weight:bold;">-</span>
-          <span style="color:var(--paper-dim);">↔</span>
-          <span id="charOut" style="color:var(--copper); font-weight:bold;">-</span>
-        </div>
-      </div>
-      <div style="padding:1rem; flex:1; display:flex; flex-direction:column; justify-content:center;">
-        <div class="mapping-scroll" style="background:var(--bg); border:1px solid var(--border-strong); padding:1rem; border-radius:8px;">
-          <div class="mapping-row" id="alfabetoTop" style="margin-bottom:0.75rem;"></div>
-          <div class="mapping-row" id="alfabetoBottom"></div>
-        </div>
-      </div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="rot47.html">← ROT-47</a>
+        <span class="fn-dot">·</span>
+        <a href="polybios.html">POLYBIOS →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 5 / 6</span>
     </div>
 
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div id="panelEntrada" class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: atbash"></textarea>
-      </div>
-      <div id="panelSalida" class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header copper">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="rot47.html">← ROT-47</a>
-  <span class="fn-dot">·</span>
-  <a href="polybios.html">POLYBIOS →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 5 / 6</span>
-</div>
-
-<!-- TUTORIAL -->
-<button id="btnTutorial" title="Tutorial interactivo" class="fixed bottom-6 right-6 z-40 bg-[var(--copper)] hover:opacity-80 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border border-white/20">
+    <!-- TUTORIAL -->
+    <button id="btnTutorial" title="Tutorial interactivo" class="fixed bottom-6 right-6 z-40 bg-[var(--copper)] hover:opacity-80 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border border-white/20">
   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </button>
 
-<div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
+    <div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
 
-<div id="tutorialBubble" class="fixed z-50 w-80 bg-[var(--bg-elevated)] border border-[var(--copper)] rounded-xl shadow-2xl transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
-  <div class="border-b border-white/10 p-3 flex justify-between items-center bg-black/20">
-    <div class="flex items-center gap-2 text-[var(--copper)] font-bold uppercase tracking-wider text-[10px]">
-      <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-      Entrenamiento · Atbash
-    </div>
-    <button id="btnCerrarTutorial" class="text-[var(--paper-dim)] hover:text-white p-1 rounded-lg transition cursor-pointer">
+    <div id="tutorialBubble" class="fixed z-50 w-80 bg-[var(--bg-elevated)] border border-[var(--copper)] rounded-xl shadow-2xl transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
+        <div class="border-b border-white/10 p-3 flex justify-between items-center bg-black/20">
+            <div class="flex items-center gap-2 text-[var(--copper)] font-bold uppercase tracking-wider text-[10px]">
+                <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Entrenamiento · Atbash
+            </div>
+            <button id="btnCerrarTutorial" class="text-[var(--paper-dim)] hover:text-white p-1 rounded-lg transition cursor-pointer">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
-  </div>
-  <div class="p-5">
-    <h3 id="tutTitle" class="text-base font-bold text-[var(--paper)] mb-1.5">Título</h3>
-    <p id="tutText" class="text-[var(--paper-dim)] text-sm leading-relaxed">Texto informativo</p>
-  </div>
-  <div class="bg-black/40 px-4 py-3 border-t border-white/10 flex justify-between items-center gap-2">
-    <div class="flex gap-1.5" id="tutDots"></div>
-    <div class="flex gap-2">
-      <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-[var(--paper-dim)] hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-white/10">← Atrás</button>
-      <button id="btnTutNext" class="px-4 py-1.5 bg-[var(--copper)] hover:opacity-80 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg transition cursor-pointer">Siguiente →</button>
+        </div>
+        <div class="p-5">
+            <h3 id="tutTitle" class="text-base font-bold text-[var(--paper)] mb-1.5">Título</h3>
+            <p id="tutText" class="text-[var(--paper-dim)] text-sm leading-relaxed">Texto informativo</p>
+        </div>
+        <div class="bg-black/40 px-4 py-3 border-t border-white/10 flex justify-between items-center gap-2">
+            <div class="flex gap-1.5" id="tutDots"></div>
+            <div class="flex gap-2">
+                <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-[var(--paper-dim)] hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-white/10">← Atrás</button>
+                <button id="btnTutNext" class="px-4 py-1.5 bg-[var(--copper)] hover:opacity-80 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg transition cursor-pointer">Siguiente →</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<script src="js/ciphers/atbash.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/atbash-page.js"></script>
+    <script src="js/ciphers/atbash.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/atbash-page.js"></script>
 </body>
-</html>
 
+</html>

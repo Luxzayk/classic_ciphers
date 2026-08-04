@@ -1,182 +1,212 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cifrado de Hill | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    .alphabet-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-    .alphabet-table th, .alphabet-table td { border: 1px solid var(--border-strong); padding: 0.5rem; text-align: center; }
-    .alphabet-header-bg { background-color: rgba(154, 59, 51, 0.1); color: var(--red); }
-    .alphabet-row-bg { background-color: rgba(255, 255, 255, 0.03); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrado de Hill | CriptoSuite</title>
+    <meta name="description" content="Explora el cifrado de Hill con matrices y operaciones algebraicas para proteger mensajes.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .alphabet-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+        
+        .alphabet-table th,
+        .alphabet-table td {
+            border: 1px solid var(--border-strong);
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        .alphabet-header-bg {
+            background-color: rgba(154, 59, 51, 0.1);
+            color: var(--red);
+        }
+        
+        .alphabet-row-bg {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        
+        .letter-cell {
+            color: var(--paper);
+            font-weight: 700;
+        }
+        
+        .number-cell {
+            color: var(--red);
+            font-weight: 700;
+            font-family: ui-monospace, monospace;
+        }
+        
+        .matrix-cell {
+            background-color: rgba(154, 59, 51, 0.06);
+            color: var(--red);
+            border: 1px solid rgba(154, 59, 51, 0.2);
+            border-radius: 4px;
+            padding: 8px;
+            font-family: ui-monospace, monospace;
+            text-align: center;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
 
-    .letter-cell { color: var(--paper); font-weight: 700; }
-    .number-cell { color: var(--red); font-weight: 700; font-family: ui-monospace, monospace; }
-
-    .matrix-cell {
-        background-color: rgba(154, 59, 51, 0.06);
-        color: var(--red);
-        border: 1px solid rgba(154, 59, 51, 0.2);
-        border-radius: 4px;
-        padding: 8px;
-        font-family: ui-monospace, monospace;
-        text-align: center;
-    }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">HILL</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-math" style="font-size:0.55rem; padding:1px 6px;">Polialfabético</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">HILL</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-math" style="font-size:0.55rem; padding:1px 6px;">Polialfabético</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow red">1929 — Lester S. Hill, Hunter College, Nueva York — primer cifrado poligráfico</p>
-  <h1 class="cipher-title">Cifrado de Hill</h1>
-  <p class="cipher-desc">El primer cifrado basado en álgebra lineal. Los bloques de texto se representan como vectores y se multiplican por una matriz clave invertible en módulo N. La seguridad requiere que det(K) sea coprimo con N. Fórmula: <span class='theory-formula'>C = K·P mod N</span> &nbsp;|&nbsp; <span class='theory-formula'>P = K⁻¹·C mod N</span></p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow red">1929 — Lester S. Hill, Hunter College, Nueva York — primer cifrado poligráfico</p>
+        <h1 class="cipher-title">Cifrado de Hill</h1>
+        <p class="cipher-desc">El primer cifrado basado en álgebra lineal. Los bloques de texto se representan como vectores y se multiplican por una matriz clave invertible en módulo N. La seguridad requiere que det(K) sea coprimo con N. Fórmula: <span class='theory-formula'>C = K·P mod N</span>            &nbsp;|&nbsp; <span class='theory-formula'>P = K⁻¹·C mod N</span></p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div class="workspace-panel">
-      <div class="panel-header red">Parámetros</div>
-      <form id="hillForm" style="display:flex; flex-direction:column; gap:1rem;" onsubmit="event.preventDefault();">
-        <div>
-            <label class="field-label">Alfabeto</label>
-            <select id="idioma" class="field-select">
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header red">Parámetros</div>
+                <form id="hillForm" style="display:flex; flex-direction:column; gap:1rem;" onsubmit="event.preventDefault();">
+                    <div>
+                        <label class="field-label">Alfabeto</label>
+                        <select id="idioma" class="field-select">
                 <option value="ES">Español (Con Ñ)</option>
                 <option value="EN">Inglés (Sin Ñ)</option>
                 <option value="CUSTOM">Personalizado...</option>
             </select>
-        </div>
+                    </div>
 
-        <div id="customAlphabetContainer" style="display:none;">
-            <label class="field-label">Alfabeto Customizado</label>
-            <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGHIJKLMN..." class="field-input uppercase">
-        </div>
+                    <div id="customAlphabetContainer" style="display:none;">
+                        <label class="field-label">Alfabeto Customizado</label>
+                        <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGHIJKLMN..." class="field-input uppercase">
+                    </div>
 
-        <div>
-            <label class="field-label">Clave (Cuadrado Perfecto)</label>
-            <input type="text" id="clave" value="FORTALEZA" placeholder="Ej: FORTALEZA (3x3)" class="field-input uppercase">
-        </div>
-      </form>
+                    <div>
+                        <label class="field-label">Clave (Cuadrado Perfecto)</label>
+                        <input type="text" id="clave" value="FORTALEZA" placeholder="Ej: FORTALEZA (3x3)" class="field-input uppercase">
+                    </div>
+                </form>
 
-      <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border);">
-          <span class="field-label">Matemáticas Clave</span>
-          <div style="display:flex; flex-direction:column; gap:0.5rem; background:var(--bg); padding:0.75rem; border-radius:4px; border:1px solid var(--border); font-size:0.65rem;">
-              <div style="display:flex; justify-content:space-between;">
-                  <span style="color:var(--paper-dim);">Dimensión:</span>
-                  <span id="matrixDimDisplay" style="font-weight:bold; color:var(--paper);">3x3</span>
-              </div>
-              <div style="display:flex; justify-content:space-between;">
-                  <span style="color:var(--paper-dim);">Determinante (det K):</span>
-                  <span id="detDisplay" style="font-weight:bold; color:var(--red);">0</span>
-              </div>
-              <div style="display:flex; justify-content:space-between;">
-                  <span style="color:var(--paper-dim);">Inv. Modular Det:</span>
-                  <span id="invDisplay" style="font-weight:bold; color:var(--red);">0</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.25rem; border-top:1px solid var(--border);">
-                  <span style="color:var(--paper-dim);">Estado:</span>
-                  <span id="matrixStatus" style="padding:2px 4px; border-radius:2px; font-size:0.55rem; font-weight:bold;">CARGANDO...</span>
-              </div>
-          </div>
-      </div>
+                <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border);">
+                    <span class="field-label">Matemáticas Clave</span>
+                    <div style="display:flex; flex-direction:column; gap:0.5rem; background:var(--bg); padding:0.75rem; border-radius:4px; border:1px solid var(--border); font-size:0.65rem;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--paper-dim);">Dimensión:</span>
+                            <span id="matrixDimDisplay" style="font-weight:bold; color:var(--paper);">3x3</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--paper-dim);">Determinante (det K):</span>
+                            <span id="detDisplay" style="font-weight:bold; color:var(--red);">0</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--paper-dim);">Inv. Modular Det:</span>
+                            <span id="invDisplay" style="font-weight:bold; color:var(--red);">0</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.25rem; border-top:1px solid var(--border);">
+                            <span style="color:var(--paper-dim);">Estado:</span>
+                            <span id="matrixStatus" style="padding:2px 4px; border-radius:2px; font-size:0.55rem; font-weight:bold;">CARGANDO...</span>
+                        </div>
+                    </div>
+                </div>
 
-      <details class="theory-details" style="margin-top:1.5rem;">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">Para una matriz 2×2, cada par de letras forma un vector [P1, P2] que se multiplica por K mod 26. K debe ser invertible: gcd(det(K), 26)=1. Las matrices no invertibles no permiten descifrado. El criptoanálisis por pares conocidos puede recuperar K con suficientes pares texto claro/cifrado.</div>
-      </details>
-    </div>
-
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" style="display:flex; flex-direction:column; gap:1.5rem;">
-      <!-- Matriz Clave -->
-      <div class="workspace-panel">
-          <div class="panel-header red">Matriz Clave ($K$)</div>
-          <div style="background:var(--bg); border:1px solid var(--border-strong); border-radius:8px; padding:1rem; display:flex; align-items:center; justify-content:center; min-height:140px;">
-              <div id="matrixGrid" style="display:grid; gap:0.5rem; text-align:center; font-size:0.75rem; font-weight:bold; width:100%; max-width:250px;"></div>
-          </div>
-      </div>
-
-      <!-- Tabla Equivalencias -->
-      <div class="workspace-panel">
-          <span class="field-label" style="margin-bottom:0.5rem;">Tabla de Equivalencias de Letras</span>
-          <div style="overflow-x:auto; background:var(--bg); border:1px solid var(--border-strong); border-radius:4px; padding:0.5rem;">
-              <table class="alphabet-table">
-                  <thead>
-                      <tr id="alphabetHeadersRow" class="alphabet-header-bg" style="font-size:0.65rem; text-transform:uppercase;">
-                          <th style="font-weight:bold; text-align:left; width:5rem;">Letra</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr id="alphabetPositionsRow" class="alphabet-row-bg" style="font-size:0.65rem;">
-                          <td style="text-align:left; color:var(--paper-dim); font-weight:bold; width:5rem;" class="alphabet-header-bg">Posición i</td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-      </div>
-    </div>
-
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:100px;" placeholder="Escribe el texto claro para cifrar... Ej: hill"></textarea>
-        
-        <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
-            <span class="field-label">Vectores de Entrada (Bloques)</span>
-            <div id="vectoresDisplay" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--red); background:var(--bg); padding:0.5rem; border-radius:4px; border:1px solid var(--border); min-height:36px; display:flex; align-items:center; word-break:break-all;">
-                Esperando texto...
+                <details class="theory-details" style="margin-top:1.5rem;">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">Para una matriz 2×2, cada par de letras forma un vector [P1, P2] que se multiplica por K mod 26. K debe ser invertible: gcd(det(K), 26)=1. Las matrices no invertibles no permiten descifrado. El criptoanálisis por pares conocidos puede
+                        recuperar K con suficientes pares texto claro/cifrado.</div>
+                </details>
             </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" style="display:flex; flex-direction:column; gap:1.5rem;">
+                <!-- Matriz Clave -->
+                <div class="workspace-panel">
+                    <div class="panel-header red">Matriz Clave ($K$)</div>
+                    <div style="background:var(--bg); border:1px solid var(--border-strong); border-radius:8px; padding:1rem; display:flex; align-items:center; justify-content:center; min-height:140px;">
+                        <div id="matrixGrid" style="display:grid; gap:0.5rem; text-align:center; font-size:0.75rem; font-weight:bold; width:100%; max-width:250px;"></div>
+                    </div>
+                </div>
+
+                <!-- Tabla Equivalencias -->
+                <div class="workspace-panel">
+                    <span class="field-label" style="margin-bottom:0.5rem;">Tabla de Equivalencias de Letras</span>
+                    <div style="overflow-x:auto; background:var(--bg); border:1px solid var(--border-strong); border-radius:4px; padding:0.5rem;">
+                        <table class="alphabet-table">
+                            <thead>
+                                <tr id="alphabetHeadersRow" class="alphabet-header-bg" style="font-size:0.65rem; text-transform:uppercase;">
+                                    <th style="font-weight:bold; text-align:left; width:5rem;">Letra</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="alphabetPositionsRow" class="alphabet-row-bg" style="font-size:0.65rem;">
+                                    <td style="text-align:left; color:var(--paper-dim); font-weight:bold; width:5rem;" class="alphabet-header-bg">Posición i</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:100px;" placeholder="Escribe el texto claro para cifrar... Ej: hill"></textarea>
+
+                    <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+                        <span class="field-label">Vectores de Entrada (Bloques)</span>
+                        <div id="vectoresDisplay" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--red); background:var(--bg); padding:0.5rem; border-radius:4px; border:1px solid var(--border); min-height:36px; display:flex; align-items:center; word-break:break-all;">
+                            Esperando texto...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header red">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-math" style="flex:1; min-height:110px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-      </div>
-      
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header red">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-math" style="flex:1; min-height:110px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
     </div>
 
-  </div>
-</div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="playfair.html">← PLAYFAIR</a>
+        <span class="fn-dot">·</span>
+        <span style="color:var(--border-strong); cursor:default;">— →</span>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Polialfabético · 4 / 4</span>
+    </div>
 
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="playfair.html">← PLAYFAIR</a>
-  <span class="fn-dot">·</span>
-  <span style="color:var(--border-strong); cursor:default;">— →</span>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Polialfabético · 4 / 4</span>
-</div>
-
-<script src="js/ciphers/hill.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/hill-page.js"></script>
+    <script src="js/ciphers/hill.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/hill-page.js"></script>
 </body>
-</html>
 
+</html>

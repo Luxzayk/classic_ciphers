@@ -1,89 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cifrado por Series | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    .color-s0 { background-color: rgba(76, 107, 84, 0.2); border-color: var(--green); color: var(--green); }
-    .color-s0.active-cell { background-color: rgba(76, 107, 84, 0.4); box-shadow: 0 0 10px rgba(76, 107, 84, 0.5); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrado por Series | CriptoSuite</title>
+    <meta name="description" content="Simula el cifrado por series y aprende a distribuir el texto con sucesiones periódicas.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .color-s0 {
+            background-color: rgba(76, 107, 84, 0.2);
+            border-color: var(--green);
+            color: var(--green);
+        }
+        
+        .color-s0.active-cell {
+            background-color: rgba(76, 107, 84, 0.4);
+            box-shadow: 0 0 10px rgba(76, 107, 84, 0.5);
+        }
+        
+        .color-s1 {
+            background-color: rgba(193, 113, 47, 0.2);
+            border-color: var(--copper);
+            color: var(--copper);
+        }
+        
+        .color-s1.active-cell {
+            background-color: rgba(193, 113, 47, 0.4);
+            box-shadow: 0 0 10px rgba(193, 113, 47, 0.5);
+        }
+        
+        .color-s2 {
+            background-color: rgba(154, 59, 51, 0.2);
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        .color-s2.active-cell {
+            background-color: rgba(154, 59, 51, 0.4);
+            box-shadow: 0 0 10px rgba(154, 59, 51, 0.5);
+        }
+        
+        .color-s3 {
+            background-color: rgba(245, 158, 11, 0.2);
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+        
+        .color-s3.active-cell {
+            background-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        
+        .color-leftover {
+            background-color: rgba(201, 191, 169, 0.2);
+            border-color: var(--paper-dim);
+            color: var(--paper-dim);
+        }
+        
+        .color-leftover.active-cell {
+            background-color: rgba(201, 191, 169, 0.4);
+            box-shadow: 0 0 10px rgba(201, 191, 169, 0.5);
+        }
+        
+        .cell-box {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border-strong);
+            background: var(--bg);
+            color: var(--paper);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s ease;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
 
-    .color-s1 { background-color: rgba(193, 113, 47, 0.2); border-color: var(--copper); color: var(--copper); }
-    .color-s1.active-cell { background-color: rgba(193, 113, 47, 0.4); box-shadow: 0 0 10px rgba(193, 113, 47, 0.5); }
-
-    .color-s2 { background-color: rgba(154, 59, 51, 0.2); border-color: var(--red); color: var(--red); }
-    .color-s2.active-cell { background-color: rgba(154, 59, 51, 0.4); box-shadow: 0 0 10px rgba(154, 59, 51, 0.5); }
-
-    .color-s3 { background-color: rgba(245, 158, 11, 0.2); border-color: #fbbf24; color: #fbbf24; }
-    .color-s3.active-cell { background-color: rgba(245, 158, 11, 0.4); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
-
-    .color-leftover { background-color: rgba(201, 191, 169, 0.2); border-color: var(--paper-dim); color: var(--paper-dim); }
-    .color-leftover.active-cell { background-color: rgba(201, 191, 169, 0.4); box-shadow: 0 0 10px rgba(201, 191, 169, 0.5); }
-
-    .cell-box {
-      width: 28px; height: 28px;
-      border: 1px solid var(--border-strong);
-      background: var(--bg);
-      color: var(--paper);
-      border-radius: 4px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      position: relative;
-      transition: all 0.2s ease;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-    }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">SERIES</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">SERIES</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow green">Transposición por sucesiones numéricas — distribución periódica sin colisiones</p>
-  <h1 class="cipher-title">Cifrado por Series</h1>
-  <p class="cipher-desc">El mensaje se distribuye en sub-mensajes indexados por una sucesión numérica periódica libre de colisiones. <span class="theory-formula">Cada posición del mensaje original se asigna a un sub-mensaje según el ciclo de la serie.</span></p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow green">Transposición por sucesiones numéricas — distribución periódica sin colisiones</p>
+        <h1 class="cipher-title">Cifrado por Series</h1>
+        <p class="cipher-desc">El mensaje se distribuye en sub-mensajes indexados por una sucesión numérica periódica libre de colisiones. <span class="theory-formula">Cada posición del mensaje original se asigna a un sub-mensaje según el ciclo de la serie.</span></p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div class="workspace-panel">
-      <div class="panel-header green">Parámetros</div>
-      
-      <form id="seriesForm" class="p-4 flex flex-col gap-4" onsubmit="return false;">
-        <div>
-          <label class="field-label">Operación</label>
-          <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
-            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header green">Parámetros</div>
+
+                <form id="seriesForm" class="p-4 flex flex-col gap-4" onsubmit="return false;">
+                    <div>
+                        <label class="field-label">Operación</label>
+                        <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+                            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
               <input type="radio" name="operacion" value="CIFRAR" checked> Cifrar
             </label>
-            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
+                            <label style="display:flex; align-items:center; gap:0.25rem; font-family:var(--font-mono); font-size:0.8rem; cursor:pointer;">
               <input type="radio" name="operacion" value="DESCIFRAR"> Descifrar
             </label>
-          </div>
-        </div>
+                        </div>
+                    </div>
 
-        <div>
-          <label class="field-label">Número de Series</label>
-          <select id="numSeries" class="field-select w-full mt-1">
+                    <div>
+                        <label class="field-label">Número de Series</label>
+                        <select id="numSeries" class="field-select w-full mt-1">
             <option value="1">1 Serie</option>
             <option value="2">2 Series</option>
             <option value="3" selected>3 Series</option>
@@ -93,81 +140,81 @@
             <option value="7">7 Series</option>
             <option value="8">8 Series</option>
           </select>
-        </div>
+                    </div>
 
-        <div class="pt-2 border-t" style="border-color:var(--border);">
-          <span class="field-label" style="display:block; margin-bottom:0.5rem;">Fórmula de Series</span>
-          <div id="seriesInputsContainer" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
-        </div>
-      </form>
+                    <div class="pt-2 border-t" style="border-color:var(--border);">
+                        <span class="field-label" style="display:block; margin-bottom:0.5rem;">Fórmula de Series</span>
+                        <div id="seriesInputsContainer" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+                    </div>
+                </form>
 
-      <details class="theory-details">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">
-          <p>La serie define el orden de asignación: si la serie es [1,2,3], la posición 1 va al sub-mensaje 1, la 2 al 2, la 3 al 3, la 4 al 1 de nuevo, etc.</p>
-          <p>El descifrado concatena los sub-mensajes en el orden de la serie y reconstruye el mensaje por posiciones.</p>
-        </div>
-      </details>
-    </div>
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        <p>La serie define el orden de asignación: si la serie es [1,2,3], la posición 1 va al sub-mensaje 1, la 2 al 2, la 3 al 3, la 4 al 1 de nuevo, etc.</p>
+                        <p>El descifrado concatena los sub-mensajes en el orden de la serie y reconstruye el mensaje por posiciones.</p>
+                    </div>
+                </details>
+            </div>
 
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" class="workspace-panel">
-      <div class="panel-header green">Distribución de Series</div>
-      
-      <div class="p-4 flex flex-col flex-grow">
-        <div id="seriesLegend" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; padding:0.5rem; background:rgba(0,0,0,0.2); border:1px solid var(--border); font-family:var(--font-mono); font-size:0.75rem;"></div>
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" class="workspace-panel">
+                <div class="panel-header green">Distribución de Series</div>
 
-        <div class="field-label mb-2">Grilla de Distribución (1-N)</div>
-        <div style="overflow-y:auto; max-height:12rem; margin-bottom:1rem;">
-          <div id="simuladorGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(28px, 1fr)); gap:0.25rem;"></div>
-        </div>
+                <div class="p-4 flex flex-col flex-grow">
+                    <div id="seriesLegend" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; padding:0.5rem; background:rgba(0,0,0,0.2); border:1px solid var(--border); font-family:var(--font-mono); font-size:0.75rem;"></div>
 
-        <div class="pt-3 border-t flex-grow" style="border-color:var(--border);">
-          <p class="field-label" style="margin-bottom:0.5rem;">Composición de Submensajes</p>
-          <div id="submessagesContainer" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
-        </div>
-      </div>
-    </div>
+                    <div class="field-label mb-2">Grilla de Distribución (1-N)</div>
+                    <div style="overflow-y:auto; max-height:12rem; margin-bottom:1rem;">
+                        <div id="simuladorGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(28px, 1fr)); gap:0.25rem;"></div>
+                    </div>
 
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:80px;" placeholder="Escribe el mensaje claro para cifrar..."></textarea>
-      </div>
-      
-      <button id="btnAnimar" class="btn-secondary" style="margin:0.5rem 0; width:100%; color:var(--copper); border-color:rgba(193,113,47,0.3); padding:0.5rem;">
+                    <div class="pt-3 border-t flex-grow" style="border-color:var(--border);">
+                        <p class="field-label" style="margin-bottom:0.5rem;">Composición de Submensajes</p>
+                        <div id="submessagesContainer" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:80px;" placeholder="Escribe el mensaje claro para cifrar..."></textarea>
+                </div>
+
+                <button id="btnAnimar" class="btn-secondary" style="margin:0.5rem 0; width:100%; color:var(--copper); border-color:rgba(193,113,47,0.3); padding:0.5rem;">
         Animar Simulación
       </button>
 
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header green">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header green">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:80px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-        <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:80px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
     </div>
 
-  </div>
-</div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="grupos.html">← GRUPOS</a>
+        <span class="fn-dot">·</span>
+        <a href="vigenere.html">VIGENÈRE →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 5 / 5</span>
+    </div>
 
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="grupos.html">← GRUPOS</a>
-  <span class="fn-dot">·</span>
-  <a href="vigenere.html">VIGENÈRE →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 5 / 5</span>
-</div>
-
-<script src="js/ciphers/series.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/series-page.js"></script>
+    <script src="js/ciphers/series.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/series-page.js"></script>
 </body>
-</html>
 
+</html>

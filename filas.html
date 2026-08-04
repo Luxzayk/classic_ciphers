@@ -1,188 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cifrado por Filas | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    #matrixTable {
-        width: 100%; text-align: center; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.85rem;
-    }
-    #matrixTable th, #matrixTable td {
-        padding: 6px 10px;
-        border: 1px solid var(--border-strong);
-    }
-    #matrixTable th {
-        background-color: rgba(76, 107, 84, 0.2);
-        color: var(--green);
-        font-weight: normal;
-    }
-    #matrixTable td {
-        color: var(--paper);
-    }
-    .key-header {
-        color: var(--green) !important; font-weight: bold !important; background-color: rgba(76, 107, 84, 0.3) !important;
-    }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrado por Filas | CriptoSuite</title>
+    <meta name="description" content="Prueba el cifrado por filas y observa cómo la transposición reorganiza el texto.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        #matrixTable {
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        
+        #matrixTable th,
+        #matrixTable td {
+            padding: 6px 10px;
+            border: 1px solid var(--border-strong);
+        }
+        
+        #matrixTable th {
+            background-color: rgba(76, 107, 84, 0.2);
+            color: var(--green);
+            font-weight: normal;
+        }
+        
+        #matrixTable td {
+            color: var(--paper);
+        }
+        
+        .key-header {
+            color: var(--green) !important;
+            font-weight: bold !important;
+            background-color: rgba(76, 107, 84, 0.3) !important;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">FILAS</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">FILAS</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-transp" style="font-size:0.55rem; padding:1px 6px;">Transposición</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow green">Transposición por filas — variante horizontal de la transposición columnar</p>
-  <h1 class="cipher-title">Cifrado por Filas</h1>
-  <p class="cipher-desc">El texto se distribuye verticalmente en columnas de altura Nf. La lectura se realiza horizontalmente fila a fila, reorganizando el orden de los caracteres originales. <span class="theory-formula">Es el método dual de la transposición columnar.</span></p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow green">Transposición por filas — variante horizontal de la transposición columnar</p>
+        <h1 class="cipher-title">Cifrado por Filas</h1>
+        <p class="cipher-desc">El texto se distribuye verticalmente en columnas de altura Nf. La lectura se realiza horizontalmente fila a fila, reorganizando el orden de los caracteres originales. <span class="theory-formula">Es el método dual de la transposición columnar.</span></p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div class="workspace-panel">
-      <div class="panel-header green">Parámetros</div>
-      
-      <form id="filasForm" class="p-4 flex flex-col gap-4" onsubmit="event.preventDefault();">
-        <div>
-          <label class="field-label">Tipo Transposición</label>
-          <select id="tipoCifrado" class="field-select w-full mt-1">
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header green">Parámetros</div>
+
+                <form id="filasForm" class="p-4 flex flex-col gap-4" onsubmit="event.preventDefault();">
+                    <div>
+                        <label class="field-label">Tipo Transposición</label>
+                        <select id="tipoCifrado" class="field-select w-full mt-1">
             <option value="SIMPLE">Filas Simples (Sin Clave)</option>
             <option value="CLAVE">Filas con Clave (Permutada)</option>
           </select>
-        </div>
+                    </div>
 
-        <div>
-          <label class="field-label">Alfabeto</label>
-          <select id="idioma" class="field-select w-full mt-1">
+                    <div>
+                        <label class="field-label">Alfabeto</label>
+                        <select id="idioma" class="field-select w-full mt-1">
             <option value="ES">Español (Con Ñ)</option>
             <option value="EN">Inglés (Sin Ñ)</option>
             <option value="CUSTOM">Personalizado...</option>
           </select>
-        </div>
+                    </div>
 
-        <div id="customAlphabetContainer" class="hidden">
-          <label class="field-label" style="color:var(--green);">Alfabeto Personalizado</label>
-          <input type="text" id="alfabetoCustom" placeholder="Ej: QWERTY..." class="field-input w-full mt-1 uppercase">
-        </div>
+                    <div id="customAlphabetContainer" class="hidden">
+                        <label class="field-label" style="color:var(--green);">Alfabeto Personalizado</label>
+                        <input type="text" id="alfabetoCustom" placeholder="Ej: QWERTY..." class="field-input w-full mt-1 uppercase">
+                    </div>
 
-        <div id="simpleRowsContainer">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="field-label">Número de Filas</label>
-            <span id="rowsValueDisplay" class="value-display" style="color:var(--green);">3</span>
-          </div>
-          <input type="range" id="numRows" min="2" max="15" value="3" class="w-full mt-2" style="--fill:7.7%;">
-        </div>
+                    <div id="simpleRowsContainer">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label class="field-label">Número de Filas</label>
+                            <span id="rowsValueDisplay" class="value-display" style="color:var(--green);">3</span>
+                        </div>
+                        <input type="range" id="numRows" min="2" max="15" value="3" class="w-full mt-2" style="--fill:7.7%;">
+                    </div>
 
-        <div id="claveKeyContainer" class="hidden">
-          <label class="field-label">Palabra Clave</label>
-          <input type="text" id="clave" value="SALUDO" placeholder="Ej: SALUDO" class="field-input w-full mt-1 uppercase">
-        </div>
-      </form>
+                    <div id="claveKeyContainer" class="hidden">
+                        <label class="field-label">Palabra Clave</label>
+                        <input type="text" id="clave" value="SALUDO" placeholder="Ej: SALUDO" class="field-input w-full mt-1 uppercase">
+                    </div>
+                </form>
 
-      <div class="p-4 border-t" style="border-color:var(--border);">
-        <span class="field-label" style="display:block; margin-bottom:0.5rem;">Detalles de Matriz</span>
-        <div style="display:flex; flex-direction:column; gap:0.25rem; font-family:var(--font-mono); font-size:0.75rem; color:var(--paper-dim); background:rgba(0,0,0,0.2); padding:0.5rem; border:1px solid var(--border);">
-          <div style="display:flex; justify-content:space-between;">
-            <span>Filas (Nf):</span>
-            <span id="displayNf" style="color:var(--paper);">3</span>
-          </div>
-          <div style="display:flex; justify-content:space-between;">
-            <span>Longitud Texto (Lc):</span>
-            <span id="displayLc" style="color:var(--paper);">0</span>
-          </div>
-          <div style="display:flex; justify-content:space-between;">
-            <span>Columnas (Nc):</span>
-            <span id="displayNc" style="color:var(--green);">0</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:0.25rem; margin-top:0.25rem;">
-            <span>Clave Estado:</span>
-            <span id="keyStatus" style="color:var(--green); font-size:0.65rem; font-weight:bold; padding:2px 4px; background:rgba(76,107,84,0.2);">VÁLIDA</span>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:0.25rem; border-top:1px solid var(--border); padding-top:0.25rem; margin-top:0.25rem;">
-            <span>Alfabeto Activo:</span>
-            <span id="displayAlfabeto" style="font-size:0.65rem; word-break:break-all; background:var(--bg); padding:2px 4px; border:1px solid var(--border);">ABCDEFGH...</span>
-          </div>
-        </div>
-      </div>
+                <div class="p-4 border-t" style="border-color:var(--border);">
+                    <span class="field-label" style="display:block; margin-bottom:0.5rem;">Detalles de Matriz</span>
+                    <div style="display:flex; flex-direction:column; gap:0.25rem; font-family:var(--font-mono); font-size:0.75rem; color:var(--paper-dim); background:rgba(0,0,0,0.2); padding:0.5rem; border:1px solid var(--border);">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Filas (Nf):</span>
+                            <span id="displayNf" style="color:var(--paper);">3</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Longitud Texto (Lc):</span>
+                            <span id="displayLc" style="color:var(--paper);">0</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Columnas (Nc):</span>
+                            <span id="displayNc" style="color:var(--green);">0</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:0.25rem; margin-top:0.25rem;">
+                            <span>Clave Estado:</span>
+                            <span id="keyStatus" style="color:var(--green); font-size:0.65rem; font-weight:bold; padding:2px 4px; background:rgba(76,107,84,0.2);">VÁLIDA</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.25rem; border-top:1px solid var(--border); padding-top:0.25rem; margin-top:0.25rem;">
+                            <span>Alfabeto Activo:</span>
+                            <span id="displayAlfabeto" style="font-size:0.65rem; word-break:break-all; background:var(--bg); padding:2px 4px; border:1px solid var(--border);">ABCDEFGH...</span>
+                        </div>
+                    </div>
+                </div>
 
-      <details class="theory-details">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">
-          <p>El mensaje se inscribe en columnas de Nf filas (de arriba a abajo, columna por columna) y se lee por filas (de izquierda a derecha).</p>
-          <p>Si el texto no llena la última fila, se añaden caracteres de relleno. El descifrado invierte el proceso.</p>
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        <p>El mensaje se inscribe en columnas de Nf filas (de arriba a abajo, columna por columna) y se lee por filas (de izquierda a derecha).</p>
+                        <p>Si el texto no llena la última fila, se añaden caracteres de relleno. El descifrado invierte el proceso.</p>
+                    </div>
+                </details>
+            </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" class="workspace-panel">
+                <div class="panel-header green">Matriz de Reacomodo Dinámico</div>
+
+                <div class="p-4" style="overflow-x:auto;">
+                    <table id="matrixTable"></table>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: filas"></textarea>
+                </div>
+
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header green">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-      </details>
     </div>
 
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" class="workspace-panel">
-      <div class="panel-header green">Matriz de Reacomodo Dinámico</div>
-      
-      <div class="p-4" style="overflow-x:auto;">
-        <table id="matrixTable"></table>
-      </div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="columnas.html">← COLUMNAS</a>
+        <span class="fn-dot">·</span>
+        <a href="grupos.html">GRUPOS →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 3 / 5</span>
     </div>
 
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: filas"></textarea>
-      </div>
-      
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header green">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary" style="background:var(--green); border-color:var(--green); color:var(--bg);">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-transp" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="columnas.html">← COLUMNAS</a>
-  <span class="fn-dot">·</span>
-  <a href="grupos.html">GRUPOS →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Transposición · 3 / 5</span>
-</div>
-
-<script src="js/ciphers/filas.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/filas-page.js"></script>
-<script>
-document.querySelectorAll('input[type=range]').forEach(s => {
-    function sync() {
-        const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
-        s.style.setProperty('--fill', pct);
-    }
-    s.addEventListener('input', sync); sync();
-});
-</script>
+    <script src="js/ciphers/filas.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/filas-page.js"></script>
+    <script>
+        document.querySelectorAll('input[type=range]').forEach(s => {
+            function sync() {
+                const pct = ((+s.value - +s.min) / (+s.max - +s.min) * 100).toFixed(2) + '%';
+                s.style.setProperty('--fill', pct);
+            }
+            s.addEventListener('input', sync);
+            sync();
+        });
+    </script>
 </body>
-</html>
 
+</html>

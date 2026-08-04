@@ -1,211 +1,275 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POLYBIOS | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    .polibios-grid { display: grid; gap: 4px; }
-    .pol-cell {
-        aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-        font-family: var(--font-mono); font-weight: bold; border-radius: 4px;
-        transition: all 0.2s; font-size: 14px; cursor: default; position: relative;
-    }
-    .pol-cell.header-row { background: rgba(193,113,47, 0.15); color: var(--copper); font-weight: 700; }
-    .pol-cell.header-col { background: rgba(193,113,47, 0.15); color: var(--copper); font-weight: 700; }
-    .pol-cell.letter { background: rgba(255, 255, 255, 0.05); color: var(--paper); border: 1px solid var(--border-strong); }
-    
-    .pol-cell.letter:hover { background: rgba(193,113,47, 0.2); color: var(--copper); border-color: var(--copper); transform: scale(1.08); z-index: 2; }
-    .pol-cell.highlighted { background: rgba(193,113,47, 0.3) !important; color: #fff !important; border-color: var(--copper) !important; box-shadow: 0 0 12px rgba(193,113,47, 0.5); transform: scale(1.1); z-index: 3; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLYBIOS | CriptoSuite</title>
+    <meta name="description" content="Comprende el cuadrado de Polybios y su sistema de coordenadas para codificar letras.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .polibios-grid {
+            display: grid;
+            gap: 4px;
+        }
+        
+        .pol-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 14px;
+            cursor: default;
+            position: relative;
+        }
+        
+        .pol-cell.header-row {
+            background: rgba(193, 113, 47, 0.15);
+            color: var(--copper);
+            font-weight: 700;
+        }
+        
+        .pol-cell.header-col {
+            background: rgba(193, 113, 47, 0.15);
+            color: var(--copper);
+            font-weight: 700;
+        }
+        
+        .pol-cell.letter {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--paper);
+            border: 1px solid var(--border-strong);
+        }
+        
+        .pol-cell.letter:hover {
+            background: rgba(193, 113, 47, 0.2);
+            color: var(--copper);
+            border-color: var(--copper);
+            transform: scale(1.08);
+            z-index: 2;
+        }
+        
+        .pol-cell.highlighted {
+            background: rgba(193, 113, 47, 0.3) !important;
+            color: #fff !important;
+            border-color: var(--copper) !important;
+            box-shadow: 0 0 12px rgba(193, 113, 47, 0.5);
+            transform: scale(1.1);
+            z-index: 3;
+        }
+        
+        .pol-cell.empty {
+            background: transparent;
+            border: none;
+        }
+        
+        .pol-cell.letter::after {
+            content: attr(data-coords);
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: var(--paper-dim);
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity .15s;
+        }
+        
+        .pol-cell.letter:hover::after {
+            opacity: 1;
+        }
+        
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-strong);
+        }
+        
+        .tutorial-focus {
+            position: relative;
+            z-index: 20;
+            box-shadow: 0 0 0 4px rgba(193, 113, 47, 0.5), 0 0 35px rgba(193, 113, 47, 0.4);
+            border-radius: 12px;
+            transition: all .3s ease;
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
 
-    .pol-cell.empty { background: transparent; border: none; }
-
-    .pol-cell.letter::after {
-        content: attr(data-coords); position: absolute; bottom: -18px; left: 50%;
-        transform: translateX(-50%); font-size: 9px; color: var(--paper-dim); pointer-events: none;
-        white-space: nowrap; opacity: 0; transition: opacity .15s;
-    }
-    .pol-cell.letter:hover::after { opacity: 1; }
-
-    .stat-badge { background: rgba(255,255,255,0.03); border: 1px solid var(--border-strong); }
-
-    .tutorial-focus {
-        position: relative; z-index: 20;
-        box-shadow: 0 0 0 4px rgba(193,113,47,0.5), 0 0 35px rgba(193,113,47,0.4);
-        border-radius: 12px; transition: all .3s ease;
-    }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">POLYBIOS</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">POLYBIOS</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-subst" style="font-size:0.55rem; padding:1px 6px;">Sustitución</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow">ca. 200 A.C. — Polibio de Megalópolis, Grecia — señales de antorchas</p>
-  <h1 class="cipher-title">Cuadrado de Polybios</h1>
-  <p class="cipher-desc">Cada letra se localiza en una cuadrícula 5×5 y se codifica con sus coordenadas (fila, columna). Permitió transmitir mensajes a distancia mediante señales de antorchas. Es precursor del código Morse y del Tap Code de prisioneros de guerra. Fórmula: <span class='theory-formula'>[letra] → (fila, col) en grilla 5×5</span></p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow">ca. 200 A.C. — Polibio de Megalópolis, Grecia — señales de antorchas</p>
+        <h1 class="cipher-title">Cuadrado de Polybios</h1>
+        <p class="cipher-desc">Cada letra se localiza en una cuadrícula 5×5 y se codifica con sus coordenadas (fila, columna). Permitió transmitir mensajes a distancia mediante señales de antorchas. Es precursor del código Morse y del Tap Code de prisioneros de guerra. Fórmula:
+            <span class='theory-formula'>[letra] → (fila, col) en grilla 5×5</span></p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div id="panelParametros" class="workspace-panel">
-      <div class="panel-header copper">Parámetros</div>
-      <form id="polybiosForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
-        <div>
-          <label class="field-label" style="margin-bottom:0.5rem; display:block;">Operación</label>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; background:rgba(0,0,0,0.2); padding:0.25rem; border-radius:6px;">
-            <label style="cursor:pointer; display:block;">
+            <!-- LEFT: PARAMS -->
+            <div id="panelParametros" class="workspace-panel">
+                <div class="panel-header copper">Parámetros</div>
+                <form id="polybiosForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem; padding:1rem;">
+                    <div>
+                        <label class="field-label" style="margin-bottom:0.5rem; display:block;">Operación</label>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; background:rgba(0,0,0,0.2); padding:0.25rem; border-radius:6px;">
+                            <label style="cursor:pointer; display:block;">
               <input type="radio" name="operacion" value="CIFRAR" class="sr-only" checked>
               <div class="radio-label-cifrar" style="text-align:center; padding:0.5rem; font-size:0.75rem; font-weight:bold; border-radius:4px; color:var(--paper-dim);">🔒 Cifrar</div>
             </label>
-            <label style="cursor:pointer; display:block;">
+                            <label style="cursor:pointer; display:block;">
               <input type="radio" name="operacion" value="DESCIFRAR" class="sr-only">
               <div class="radio-label-descifrar" style="text-align:center; padding:0.5rem; font-size:0.75rem; font-weight:bold; border-radius:4px; color:var(--paper-dim);">🔓 Descifrar</div>
             </label>
-          </div>
-          <style>
-            input[name="operacion"]:checked + div {
-              background-color: var(--copper);
-              color: #fff !important;
-            }
-          </style>
-        </div>
+                        </div>
+                        <style>
+                            input[name="operacion"]:checked+div {
+                                background-color: var(--copper);
+                                color: #fff !important;
+                            }
+                        </style>
+                    </div>
 
-        <div>
-          <label class="field-label" for="idiomaSelector">Alfabeto</label>
-          <select id="idiomaSelector" class="field-select w-full">
+                    <div>
+                        <label class="field-label" for="idiomaSelector">Alfabeto</label>
+                        <select id="idiomaSelector" class="field-select w-full">
             <option value="ES">Español (I/J y N/Ñ compartidas)</option>
             <option value="EN">Inglés (I/J compartidas)</option>
           </select>
-        </div>
+                    </div>
 
-        <div>
-          <label class="field-label" for="coordenadasSelector">Coordenadas</label>
-          <select id="coordenadasSelector" class="field-select w-full">
+                    <div>
+                        <label class="field-label" for="coordenadasSelector">Coordenadas</label>
+                        <select id="coordenadasSelector" class="field-select w-full">
             <option value="NUM">Numéricas (1 - 5)</option>
             <option value="LETRA">Alfabéticas (A - E)</option>
           </select>
+                    </div>
+                </form>
+
+                <details class="theory-details">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">
+                        La cuadrícula 5×5 alberga las 25 letras del alfabeto inglés (I y J comparten celda). En español, se adapta a 27 letras usando una cuadrícula 6×5. Cada letra queda representada por dos dígitos del 1 al 5.
+                    </div>
+                </details>
+            </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" class="workspace-panel">
+                <div class="panel-header copper" style="display:flex; justify-content:space-between;">
+                    <span>Cuadrícula 5×5</span>
+                    <span id="highlightInfo" style="font-size:0.65rem; font-family:var(--font-mono); color:var(--paper-dim);"></span>
+                </div>
+                <div style="padding:1rem; flex:1; display:flex; flex-direction:column;">
+                    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                        <div id="polibiosGrid" class="polibios-grid" style="width:100%; max-width:280px; grid-template-columns: repeat(6, 1fr);"></div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.5rem; margin-top:1.5rem;">
+                        <div class="stat-badge" style="padding:0.75rem; text-align:center; border-radius:8px;">
+                            <span style="display:block; font-size:0.55rem; text-transform:uppercase; font-weight:bold; color:var(--paper-dim);">Longitud</span>
+                            <span id="statLongitud" style="font-family:var(--font-mono); font-size:1rem; font-weight:bold;">0</span>
+                        </div>
+                        <div class="stat-badge" style="padding:0.75rem; text-align:center; border-radius:8px;">
+                            <span style="display:block; font-size:0.55rem; text-transform:uppercase; font-weight:bold; color:var(--paper-dim);">Pares</span>
+                            <span id="statPares" style="font-family:var(--font-mono); font-size:1rem; font-weight:bold; color:var(--copper);">0</span>
+                        </div>
+                        <div class="stat-badge" style="padding:0.75rem; text-align:center; border-radius:8px;">
+                            <span style="display:block; font-size:0.55rem; text-transform:uppercase; font-weight:bold; color:var(--paper-dim);">Ratio</span>
+                            <span id="statRatio" style="font-family:var(--font-mono); font-size:1rem; font-weight:bold; color:var(--paper-dim);">2×</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div id="panelEntrada" class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span id="labelEntrada">Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: Polybios"></textarea>
+                </div>
+                <div id="panelSalida" class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header copper">
+                        <span id="labelSalida">Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-      </form>
-      
-      <details class="theory-details">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">
-          La cuadrícula 5×5 alberga las 25 letras del alfabeto inglés (I y J comparten celda). En español, se adapta a 27 letras usando una cuadrícula 6×5. Cada letra queda representada por dos dígitos del 1 al 5.
-        </div>
-      </details>
     </div>
 
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" class="workspace-panel">
-      <div class="panel-header copper" style="display:flex; justify-content:space-between;">
-        <span>Cuadrícula 5×5</span>
-        <span id="highlightInfo" style="font-size:0.65rem; font-family:var(--font-mono); color:var(--paper-dim);"></span>
-      </div>
-      <div style="padding:1rem; flex:1; display:flex; flex-direction:column;">
-        <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-          <div id="polibiosGrid" class="polibios-grid" style="width:100%; max-width:280px; grid-template-columns: repeat(6, 1fr);"></div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.5rem; margin-top:1.5rem;">
-          <div class="stat-badge" style="padding:0.75rem; text-align:center; border-radius:8px;">
-            <span style="display:block; font-size:0.55rem; text-transform:uppercase; font-weight:bold; color:var(--paper-dim);">Longitud</span>
-            <span id="statLongitud" style="font-family:var(--font-mono); font-size:1rem; font-weight:bold;">0</span>
-          </div>
-          <div class="stat-badge" style="padding:0.75rem; text-align:center; border-radius:8px;">
-            <span style="display:block; font-size:0.55rem; text-transform:uppercase; font-weight:bold; color:var(--paper-dim);">Pares</span>
-            <span id="statPares" style="font-family:var(--font-mono); font-size:1rem; font-weight:bold; color:var(--copper);">0</span>
-          </div>
-          <div class="stat-badge" style="padding:0.75rem; text-align:center; border-radius:8px;">
-            <span style="display:block; font-size:0.55rem; text-transform:uppercase; font-weight:bold; color:var(--paper-dim);">Ratio</span>
-            <span id="statRatio" style="font-family:var(--font-mono); font-size:1rem; font-weight:bold; color:var(--paper-dim);">2×</span>
-          </div>
-        </div>
-      </div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="atbash.html">← ATBASH</a>
+        <span class="fn-dot">·</span>
+        <a href="escitala.html">ESCÍTALA →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 6 / 6</span>
     </div>
 
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div id="panelEntrada" class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span id="labelEntrada">Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto claro para cifrar... Ej: Polybios"></textarea>
-      </div>
-      <div id="panelSalida" class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header copper">
-          <span id="labelSalida">Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-subst" style="flex:1; min-height:130px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="atbash.html">← ATBASH</a>
-  <span class="fn-dot">·</span>
-  <a href="escitala.html">ESCÍTALA →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 6 / 6</span>
-</div>
-
-<!-- TUTORIAL -->
-<button id="btnTutorial" title="Tutorial interactivo" class="fixed bottom-6 right-6 z-40 bg-[var(--copper)] hover:opacity-80 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border border-white/20">
+    <!-- TUTORIAL -->
+    <button id="btnTutorial" title="Tutorial interactivo" class="fixed bottom-6 right-6 z-40 bg-[var(--copper)] hover:opacity-80 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border border-white/20">
   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </button>
 
-<div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
+    <div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
 
-<div id="tutorialBubble" class="fixed z-50 w-80 bg-[var(--bg-elevated)] border border-[var(--copper)] rounded-xl shadow-2xl transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
-  <div class="border-b border-white/10 p-3 flex justify-between items-center bg-black/20">
-    <div class="flex items-center gap-2 text-[var(--copper)] font-bold uppercase tracking-wider text-[10px]">
-      <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-      Entrenamiento · Polybios
-    </div>
-    <button id="btnCerrarTutorial" class="text-[var(--paper-dim)] hover:text-white p-1 rounded-lg transition cursor-pointer">
+    <div id="tutorialBubble" class="fixed z-50 w-80 bg-[var(--bg-elevated)] border border-[var(--copper)] rounded-xl shadow-2xl transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
+        <div class="border-b border-white/10 p-3 flex justify-between items-center bg-black/20">
+            <div class="flex items-center gap-2 text-[var(--copper)] font-bold uppercase tracking-wider text-[10px]">
+                <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Entrenamiento · Polybios
+            </div>
+            <button id="btnCerrarTutorial" class="text-[var(--paper-dim)] hover:text-white p-1 rounded-lg transition cursor-pointer">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
-  </div>
-  <div class="p-5">
-    <h3 id="tutTitle" class="text-base font-bold text-[var(--paper)] mb-1.5">Título</h3>
-    <p id="tutText" class="text-[var(--paper-dim)] text-sm leading-relaxed">Instrucciones aquí…</p>
-  </div>
-  <div class="bg-black/40 px-4 py-3 border-t border-white/10 flex justify-between items-center gap-2">
-    <div class="flex gap-1.5" id="tutDots"></div>
-    <div class="flex gap-2">
-      <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-[var(--paper-dim)] hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-white/10">← Atrás</button>
-      <button id="btnTutNext" class="px-4 py-1.5 bg-[var(--copper)] hover:opacity-80 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg transition cursor-pointer">Siguiente →</button>
+        </div>
+        <div class="p-5">
+            <h3 id="tutTitle" class="text-base font-bold text-[var(--paper)] mb-1.5">Título</h3>
+            <p id="tutText" class="text-[var(--paper-dim)] text-sm leading-relaxed">Instrucciones aquí…</p>
+        </div>
+        <div class="bg-black/40 px-4 py-3 border-t border-white/10 flex justify-between items-center gap-2">
+            <div class="flex gap-1.5" id="tutDots"></div>
+            <div class="flex gap-2">
+                <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-[var(--paper-dim)] hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-white/10">← Atrás</button>
+                <button id="btnTutNext" class="px-4 py-1.5 bg-[var(--copper)] hover:opacity-80 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg transition cursor-pointer">Siguiente →</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<script src="js/ciphers/polybios.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/polybios-page.js"></script>
+    <script src="js/ciphers/polybios.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/polybios-page.js"></script>
 </body>
-</html>
 
+</html>

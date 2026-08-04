@@ -1,141 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cifrado Playfair | CriptoSuite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/global.css">
-  <style>
-    .matrix-cell {
-        background-color: rgba(154, 59, 51, 0.06);
-        color: var(--red);
-        border: 1px solid rgba(154, 59, 51, 0.2);
-        border-radius: 4px;
-        padding: 10px 8px;
-        transition: all 0.2s ease;
-    }
-    .matrix-cell:hover {
-        transform: scale(1.06);
-        background-color: rgba(154, 59, 51, 0.15);
-        border-color: var(--red);
-    }
-  </style>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrado Playfair | CriptoSuite</title>
+    <meta name="description" content="Usa el cifrado Playfair para trabajar con dígrafos en una cuadrícula 5x5.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .matrix-cell {
+            background-color: rgba(154, 59, 51, 0.06);
+            color: var(--red);
+            border: 1px solid rgba(154, 59, 51, 0.2);
+            border-radius: 4px;
+            padding: 10px 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .matrix-cell:hover {
+            transform: scale(1.06);
+            background-color: rgba(154, 59, 51, 0.15);
+            border-color: var(--red);
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
 <body>
 
-<div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
+    <div id="toast-container" class="fixed top-16 right-5 z-50 flex flex-col gap-2" style="max-width:280px; width:100%;"></div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-back">← INICIO</a>
-  <span class="nav-sep">|</span>
-  <span class="nav-page-name">PLAYFAIR</span>
-  <div class="nav-status">
-    <span class="status-dot"></span>
-    <span>Offline</span>
-    <span class="nav-sep">|</span>
-    <span class="badge badge-math" style="font-size:0.55rem; padding:1px 6px;">Polialfabético</span>
-  </div>
-</nav>
+    <nav class="site-nav">
+        <a href="index.html" class="nav-back">← INICIO</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-page-name">PLAYFAIR</span>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+            <span class="nav-sep">|</span>
+            <span class="badge badge-math" style="font-size:0.55rem; padding:1px 6px;">Polialfabético</span>
+        </div>
+    </nav>
 
-<div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
-  <p class="cipher-eyebrow red">1854 — Charles Wheatstone / Lord Playfair — Primera y Segunda Guerra Mundial</p>
-  <h1 class="cipher-title">Cifrado Playfair</h1>
-  <p class="cipher-desc">Opera sobre pares de letras (dígrafos) dentro de una cuadrícula 5×5 construida con la clave. Fue el primer cifrado en operar sobre unidades mayores que una letra, lo que defiende contra el análisis de frecuencias de letras individuales.</p>
-</div>
+    <div class="cipher-page-header" style="max-width:1200px; margin:0 auto;">
+        <p class="cipher-eyebrow red">1854 — Charles Wheatstone / Lord Playfair — Primera y Segunda Guerra Mundial</p>
+        <h1 class="cipher-title">Cifrado Playfair</h1>
+        <p class="cipher-desc">Opera sobre pares de letras (dígrafos) dentro de una cuadrícula 5×5 construida con la clave. Fue el primer cifrado en operar sobre unidades mayores que una letra, lo que defiende contra el análisis de frecuencias de letras individuales.</p>
+    </div>
 
-<div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
-  <div class="workspace-grid">
+    <div style="max-width:1200px; margin:0 auto; padding:0 2rem 2rem;">
+        <div class="workspace-grid">
 
-    <!-- LEFT: PARAMS -->
-    <div class="workspace-panel">
-      <div class="panel-header red">Parámetros</div>
-      <form id="playfairForm" style="display:flex; flex-direction:column; gap:1rem;" onsubmit="event.preventDefault();">
-        <div>
-            <label class="field-label">Alfabeto / Idioma</label>
-            <select id="idioma" class="field-select">
+            <!-- LEFT: PARAMS -->
+            <div class="workspace-panel">
+                <div class="panel-header red">Parámetros</div>
+                <form id="playfairForm" style="display:flex; flex-direction:column; gap:1rem;" onsubmit="event.preventDefault();">
+                    <div>
+                        <label class="field-label">Alfabeto / Idioma</label>
+                        <select id="idioma" class="field-select">
                 <option value="ES">Español (I/J y N/Ñ fusionadas)</option>
                 <option value="EN">Inglés (I/J fusionadas)</option>
                 <option value="CUSTOM">Personalizado...</option>
             </select>
-        </div>
+                    </div>
 
-        <div id="customAlphabetContainer" style="display:none;">
-            <label class="field-label">Crea tu Alfabeto Base</label>
-            <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGH..." class="field-input uppercase">
-        </div>
+                    <div id="customAlphabetContainer" style="display:none;">
+                        <label class="field-label">Crea tu Alfabeto Base</label>
+                        <input type="text" id="alfabetoCustom" placeholder="Ej: ABCDEFGH..." class="field-input uppercase">
+                    </div>
 
-        <div>
-            <label class="field-label">Palabra Clave</label>
-            <input type="text" id="clave" value="" placeholder="Ej: ENCRIPTACION" class="field-input uppercase">
-        </div>
+                    <div>
+                        <label class="field-label">Palabra Clave</label>
+                        <input type="text" id="clave" value="" placeholder="Ej: ENCRIPTACION" class="field-input uppercase">
+                    </div>
 
-        <div style="display:flex; align-items:center; gap:0.5rem; background:var(--bg); padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
-            <input type="checkbox" id="eliminarRelleno" checked style="accent-color:var(--red); cursor:pointer;">
-            <label for="eliminarRelleno" style="font-size:0.65rem; font-weight:bold; color:var(--paper-dim); cursor:pointer; user-select:none;">Omitir relleno al descifrar</label>
-        </div>
-      </form>
+                    <div style="display:flex; align-items:center; gap:0.5rem; background:var(--bg); padding:0.5rem; border:1px solid var(--border); border-radius:4px;">
+                        <input type="checkbox" id="eliminarRelleno" checked style="accent-color:var(--red); cursor:pointer;">
+                        <label for="eliminarRelleno" style="font-size:0.65rem; font-weight:bold; color:var(--paper-dim); cursor:pointer; user-select:none;">Omitir relleno al descifrar</label>
+                    </div>
+                </form>
 
-      <details class="theory-details" style="margin-top:1.5rem;">
-        <summary>Teoría del Método</summary>
-        <div class="theory-body">Las reglas de Playfair por cada dígrafo: (1) Misma fila → desplazar columna a la derecha; (2) Misma columna → desplazar fila hacia abajo; (3) Rectángulo → intercambiar columnas. I/J comparten celda. Las letras dobles se separan insertando X entre ellas.</div>
-      </details>
-    </div>
-
-    <!-- CENTER: VISUALIZER -->
-    <div id="panelSimulador" class="workspace-panel">
-      <div class="panel-header red">Matriz Playfair 5×5</div>
-      <div style="flex-grow:1; display:flex; align-items:center; justify-content:center; padding:1rem 0;">
-          <div style="width:100%; max-width:250px; background:var(--bg); border:1px solid var(--border-strong); border-radius:8px; padding:1rem;">
-              <div id="matrixGrid" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0.5rem; font-family:var(--font-mono); text-align:center; font-size:0.875rem; font-weight:bold;"></div>
-          </div>
-      </div>
-    </div>
-
-    <!-- RIGHT: WORK -->
-    <div class="workspace-right">
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header">
-          <span>Texto Original</span>
-          <div style="display:flex; gap:0.35rem;">
-            <button id="btnPegar" class="btn-secondary">Pegar</button>
-            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
-          </div>
-        </div>
-        <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:100px;" placeholder="Escribe el texto claro para cifrar... Ej: Playfair"></textarea>
-        
-        <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
-            <span class="field-label">Diagramas (Dígrafos)</span>
-            <div id="digrafosDisplay" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--red); background:var(--bg); padding:0.5rem; border-radius:4px; border:1px solid var(--border); min-height:36px; display:flex; align-items:center; word-break:break-all;">
-                Esperando texto...
+                <details class="theory-details" style="margin-top:1.5rem;">
+                    <summary>Teoría del Método</summary>
+                    <div class="theory-body">Las reglas de Playfair por cada dígrafo: (1) Misma fila → desplazar columna a la derecha; (2) Misma columna → desplazar fila hacia abajo; (3) Rectángulo → intercambiar columnas. I/J comparten celda. Las letras dobles se separan insertando
+                        X entre ellas.</div>
+                </details>
             </div>
+
+            <!-- CENTER: VISUALIZER -->
+            <div id="panelSimulador" class="workspace-panel">
+                <div class="panel-header red">Matriz Playfair 5×5</div>
+                <div style="flex-grow:1; display:flex; align-items:center; justify-content:center; padding:1rem 0;">
+                    <div style="width:100%; max-width:250px; background:var(--bg); border:1px solid var(--border-strong); border-radius:8px; padding:1rem;">
+                        <div id="matrixGrid" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0.5rem; font-family:var(--font-mono); text-align:center; font-size:0.875rem; font-weight:bold;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: WORK -->
+            <div class="workspace-right">
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <span>Texto Original</span>
+                        <div style="display:flex; gap:0.35rem;">
+                            <button id="btnPegar" class="btn-secondary">Pegar</button>
+                            <button id="btnLimpiar" class="btn-secondary">Limpiar</button>
+                        </div>
+                    </div>
+                    <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:100px;" placeholder="Escribe el texto claro para cifrar... Ej: Playfair"></textarea>
+
+                    <div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+                        <span class="field-label">Diagramas (Dígrafos)</span>
+                        <div id="digrafosDisplay" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--red); background:var(--bg); padding:0.5rem; border-radius:4px; border:1px solid var(--border); min-height:36px; display:flex; align-items:center; word-break:break-all;">
+                            Esperando texto...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                    <div class="panel-header red">
+                        <span>Texto Cifrado</span>
+                        <button id="btnCopiar" class="btn-primary">Copiar</button>
+                    </div>
+                    <textarea id="textoSalida" class="cipher-output output-math" style="flex:1; min-height:110px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+                </div>
+            </div>
+
         </div>
-      </div>
-      
-      <div class="workspace-panel" style="display:flex; flex-direction:column;">
-        <div class="panel-header red">
-          <span>Texto Cifrado</span>
-          <button id="btnCopiar" class="btn-primary">Copiar</button>
-        </div>
-        <textarea id="textoSalida" class="cipher-output output-math" style="flex:1; min-height:110px;" readonly placeholder="El resultado aparecerá aquí..."></textarea>
-      </div>
     </div>
 
-  </div>
-</div>
+    <div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
+        <a href="alberti.html">← ALBERTI</a>
+        <span class="fn-dot">·</span>
+        <a href="hill.html">HILL →</a>
+        <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Polialfabético · 3 / 4</span>
+    </div>
 
-<div class="cipher-footnav" style="max-width:1200px; margin:0 auto;">
-  <a href="alberti.html">← ALBERTI</a>
-  <span class="fn-dot">·</span>
-  <a href="hill.html">HILL →</a>
-  <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Polialfabético · 3 / 4</span>
-</div>
-
-<script src="js/ciphers/playfair.js"></script>
-<script src="js/crypto-ux.js"></script>
-<script src="js/pages/playfair-page.js"></script>
+    <script src="js/ciphers/playfair.js"></script>
+    <script src="js/crypto-ux.js"></script>
+    <script src="js/pages/playfair-page.js"></script>
 </body>
-</html>
 
+</html>
