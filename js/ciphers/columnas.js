@@ -100,8 +100,8 @@ const ColumnasCipher = {
         if (tipo === "SIMPLE") {
             if (!clave || clave.trim() === "") clave = "7";
             numCols = parseInt(clave.trim(), 10);
-            if (isNaN(numCols) || numCols < 2 || numCols > 30) {
-                throw new Error("El número de columnas debe estar entre 2 y 30.");
+            if (isNaN(numCols) || !Number.isInteger(numCols) || numCols < 2 || numCols > 30) {
+                throw new Error("El número de columnas debe ser un entero entre 2 y 30.");
             }
         } else {
             if (!clave || clave.trim() === "") clave = "PERICO";

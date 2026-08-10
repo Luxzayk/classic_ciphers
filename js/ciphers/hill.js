@@ -236,6 +236,7 @@ const HillCipher = {
                 }
 
                 const plainVector = this.multiplyMatrixVector(invMatrix, vector, dim, m);
+                if (i > 0) result += " ";
                 for (let j = 0; j < dim; j++) {
                     result += alfabeto.charAt(plainVector[j]);
                 }
