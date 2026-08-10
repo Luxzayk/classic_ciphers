@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    btnCopiarOriginal.addEventListener("click", async () => {
+    btnCopiarOriginal?.addEventListener("click", async () => {
         if (!inputTexto.value) {
             CryptoUX.showToast("Aviso", "No hay texto para copiar.", "info");
             return;
@@ -276,6 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnLimpiar.addEventListener("click", () => {
         inputTexto.value = "";
         outputTexto.value = "";
+        ultimoCampoEditado = "entrada";
         resaltarTabla();
         inputTexto.focus();
     });
@@ -294,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    btnPegarCifrado.addEventListener("click", async () => {
+    btnPegarCifrado?.addEventListener("click", async () => {
         try {
             const textoPortapapeles = await navigator.clipboard.readText();
             if (textoPortapapeles) {

@@ -381,7 +381,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     btnLimpiar.addEventListener('click', () => {
-        inputTexto.value = ""; enviarDatos(); inputTexto.focus();
+        inputTexto.value = "";
+        if (isAnimating) stopAnimation();
+        enviarDatos();
+        inputTexto.focus();
     });
 
     btnCopiar.addEventListener('click', async () => {

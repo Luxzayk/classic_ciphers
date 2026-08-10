@@ -861,6 +861,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btnLimpiar.addEventListener('click', () => {
         inputTexto.value = "";
+        if (isAnimating) stopAnimation();
         enviarDatos();
         inputTexto.focus();
     });

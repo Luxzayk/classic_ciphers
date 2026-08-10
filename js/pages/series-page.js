@@ -580,7 +580,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     btnLimpiar.addEventListener('click', () => {
-        inputTexto.value = ""; dibujarSimulador(); enviarDatos(); inputTexto.focus({ preventScroll: true });
+        inputTexto.value = "";
+        if (isAnimating) stopAnimation();
+        else dibujarSimulador();
+        enviarDatos();
+        inputTexto.focus({ preventScroll: true });
     });
 
     btnCopiar.addEventListener('click', async () => {

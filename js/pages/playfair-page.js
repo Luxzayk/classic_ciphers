@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    btnPegarCifrado.addEventListener("click", async () => {
+    btnPegarCifrado?.addEventListener("click", async () => {
         try {
             const textoPortapapeles = await navigator.clipboard.readText();
             if (textoPortapapeles) {
@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    btnCopiarOriginal.addEventListener("click", () => {
+    btnCopiarOriginal?.addEventListener("click", () => {
         if (!inputTexto.value) {
             CryptoUX.showToast("Aviso", "No hay texto para copiar.", "info");
             return;

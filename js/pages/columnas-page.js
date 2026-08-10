@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
         navigator.clipboard.writeText(outputTexto.value).then(() => CryptoUX.showToast("¡Copiado!", "Texto cifrado copiado.", "success"));
     });
     
-    btnPegarCifrado.addEventListener("click", async () => {
+    btnPegarCifrado?.addEventListener("click", async () => {
         try {
             const texto = await navigator.clipboard.readText();
             outputTexto.value = texto;
@@ -246,12 +246,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    btnCopiarOriginal.addEventListener("click", () => {
+    btnCopiarOriginal?.addEventListener("click", () => {
         if (!inputTexto.value) return;
         navigator.clipboard.writeText(inputTexto.value).then(() => CryptoUX.showToast("¡Copiado!", "Texto original copiado.", "success"));
     });
     
-    btnLimpiar.addEventListener("click", () => { inputTexto.value = ""; outputTexto.value = ""; actualizarMatrizVisual(); inputTexto.focus(); });
+    btnLimpiar.addEventListener("click", () => {
+        inputTexto.value = "";
+        outputTexto.value = "";
+        ultimoCampoEditado = "original";
+        actualizarMatrizVisual();
+        inputTexto.focus();
+    });
 
     actualizarMatrizVisual();
 });
