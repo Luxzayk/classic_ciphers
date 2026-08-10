@@ -47,17 +47,17 @@ const EscitalaCipher = {
             }
 
             let index = 0;
-            for (let f = 0; f < filas; f++) {
-                const limiteColumnas = (f === filas - 1) ? columnasCompletas : cols;
-                for (let c = 0; c < limiteColumnas; c++) {
+            for (let c = 0; c < cols; c++) {
+                const filasEnEstaColumna = (c < columnasCompletas) ? filas : filas - 1;
+                for (let f = 0; f < filasEnEstaColumna; f++) {
                     if (index < longitud) {
                         matriz[f][c] = txtLimpio.charAt(index++);
                     }
                 }
             }
 
-            for (let c = 0; c < cols; c++) {
-                for (let f = 0; f < filas; f++) {
+            for (let f = 0; f < filas; f++) {
+                for (let c = 0; c < cols; c++) {
                     if (matriz[f][c] !== '\u0000') {
                         resultado += matriz[f][c];
                     }

@@ -106,29 +106,14 @@ const PlayfairCipher = {
 
     removePadding: function(text) {
         if (!text) return "";
-        let sb = "";
-        const len = text.length;
-
-        for (let i = 0; i < len; i++) {
-            if (i > 0 && i < len - 1) {
-                const prev = text.charAt(i - 1);
-                const curr = text.charAt(i);
-                const next = text.charAt(i + 1);
-
-                if (curr === 'X' && prev === next && prev !== 'X') {
-                    continue;
-                }
-                if (curr === 'Q' && prev === next && prev === 'X') {
-                    continue;
-                }
-            }
-            sb += text.charAt(i);
-        }
-
-        let result = sb;
+        
+        let result = text;
+        
+        // Solo eliminar 'X' o 'Q' del final si fueron agregadas como relleno
         if (result.length > 0 && result.charAt(result.length - 1) === 'X') {
             result = result.substring(0, result.length - 1);
         }
+        
         return result;
     },
 

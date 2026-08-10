@@ -41,9 +41,9 @@ const PolybiosCipher = {
             if (coordType === "LETRA") {
                 coordenadasLimpias = texto.toUpperCase().replace(/[^A-E]/g, "");
                 for (let i = 0; i < coordenadasLimpias.length - 1; i += 2) {
-                    const fila = coordenadasLimpias.charCodeAt(i) - 'A'.charCodeAt(0);
-                    const columna = coordenadasLimpias.charCodeAt(i + 1) - 'A'.charCodeAt(0);
-                    const index = (fila * 5) + columna;
+                    const fila = (coordenadasLimpias.charCodeAt(i) - 'A'.charCodeAt(0)) + 1;
+                    const columna = (coordenadasLimpias.charCodeAt(i + 1) - 'A'.charCodeAt(0)) + 1;
+                    const index = ((fila - 1) * 5) + (columna - 1);
 
                     if (index >= 0 && index < matrizPolybios.length) {
                         resStr += matrizPolybios.charAt(index);
@@ -52,9 +52,9 @@ const PolybiosCipher = {
             } else {
                 coordenadasLimpias = texto.replace(/[^1-5]/g, "");
                 for (let i = 0; i < coordenadasLimpias.length - 1; i += 2) {
-                    const fila = parseInt(coordenadasLimpias.charAt(i), 10) - 1;
-                    const columna = parseInt(coordenadasLimpias.charAt(i + 1), 10) - 1;
-                    const index = (fila * 5) + columna;
+                    const fila = parseInt(coordenadasLimpias.charAt(i), 10);
+                    const columna = parseInt(coordenadasLimpias.charAt(i + 1), 10);
+                    const index = ((fila - 1) * 5) + (columna - 1);
 
                     if (index >= 0 && index < matrizPolybios.length) {
                         resStr += matrizPolybios.charAt(index);
