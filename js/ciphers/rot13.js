@@ -5,10 +5,10 @@ const Rot13Cipher = {
     determinarAlfabeto: function(idioma, alfabetoCustom) {
         if (idioma === "CUSTOM" && alfabetoCustom) {
             return alfabetoCustom.toUpperCase();
-        } else if (idioma === "EN") {
-            return this.ALFABETO_EN;
+        } else if (idioma === "ES") {
+            return this.ALFABETO_ES;
         }
-        return this.ALFABETO_ES;
+        return this.ALFABETO_EN;
     },
 
     procesar: function(texto, operacion, idioma, alfabetoCustom) {

@@ -82,7 +82,7 @@ const GruposCipher = {
         return p;
     },
 
-    procesar: function(texto, clave, idioma, alfabetoCustom, operacion) {
+    procesar: function(texto, clave, operacion, idioma, alfabetoCustom) {
         if (!texto) return "";
         const isCifrar = operacion !== "DESCIFRAR";
 
