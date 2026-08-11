@@ -5,31 +5,78 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const inputTexto = document.getElementById('textoEntrada');
     const outputTexto = document.getElementById('textoSalida');
+    const alfabetoBaseDisplay = document.getElementById("alfabetoBaseDisplay");
+    const alfabetoCifradoDisplay = document.getElementById("alfabetoCifradoDisplay");
+
     const btnCopiar = document.getElementById('btnCopiar');
     const btnLimpiar = document.getElementById('btnLimpiar');
     const btnPegar = document.getElementById('btnPegar');
     const btnCopiarOriginal = document.getElementById('btnCopiarOriginal');
     const btnPegarCifrado = document.getElementById('btnPegarCifrado');
 
+    const DIGITOS = "0123456789";
+    const DIGITOS_CIFRADOS = "5678901234";
+
+    function renderizarAlfabetoSpans(elemento, texto) {
+        elemento.innerHTML = "";
+        for (let i = 0; i < texto.length; i++) {
+            const span = document.createElement("span");
+            span.textContent = texto[i];
+            span.dataset.char = texto[i];
+            elemento.appendChild(span);
+        }
+    }
+
+    function inicializarDisplays() {
+        renderizarAlfabetoSpans(alfabetoBaseDisplay, DIGITOS);
+        renderizarAlfabetoSpans(alfabetoCifradoDisplay, DIGITOS_CIFRADOS);
+    }
+
+    function resaltarCaracter(char) {
+        alfabetoBaseDisplay.querySelectorAll("span").forEach(el => el.className = "");
+        alfabetoCifradoDisplay.querySelectorAll("span").forEach(el => el.className = "");
+
+        if (!char) return;
+
+        const indexBase = DIGITOS.indexOf(char);
+        if (indexBase === -1) return;
+
+        const baseSpans = alfabetoBaseDisplay.querySelectorAll("span");
+        if (baseSpans[indexBase]) {
+            baseSpans[indexBase].className = "active-char-base";
+        }
+
+        const cipherSpans = alfabetoCifradoDisplay.querySelectorAll("span");
+        if (cipherSpans[indexBase]) {
+            cipherSpans[indexBase].className = "active-char-cipher";
+        }
+    }
+
     function ejecutarAlgoritmo() {
         try {
+            let ultimoChar = "";
             if (ultimoCampoEditado === "original") {
                 const texto = inputTexto.value;
                 if (!texto) {
                     outputTexto.value = "";
+                    resaltarCaracter("");
                     return;
                 }
                 const res = Rot5Cipher.procesar(texto);
                 outputTexto.value = res;
+                ultimoChar = texto.charAt(texto.length - 1);
             } else {
                 const texto = outputTexto.value;
                 if (!texto) {
                     inputTexto.value = "";
+                    resaltarCaracter("");
                     return;
                 }
                 const res = Rot5Cipher.procesar(texto);
                 inputTexto.value = res;
+                ultimoChar = inputTexto.value.charAt(inputTexto.value.length - 1);
             }
+            resaltarCaracter(ultimoChar);
         } catch (err) {
             CryptoUX.showToast("Error", err.message, "error");
         }
@@ -104,6 +151,10 @@ document.addEventListener("DOMContentLoaded", () => {
         inputTexto.value = "";
         outputTexto.value = "";
         ultimoCampoEditado = "original";
+        resaltarCaracter("");
         inputTexto.focus();
     });
+
+    // Inicializar displays de dígitos troceados en spans
+    inicializarDisplays();
 });
