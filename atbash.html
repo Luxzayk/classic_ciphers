@@ -140,17 +140,34 @@
             <!-- CENTER: VISUALIZER -->
             <div id="panelSimulador" class="workspace-panel">
                 <div class="panel-header copper" style="display:flex; justify-content:space-between;">
-                    <span>Mapeo Espejo Atbash</span>
-                    <div style="display:flex; gap:0.5rem; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:4px; font-family:var(--font-mono); font-size:0.75rem;">
+                    <span>Mapeo de Alfabetos</span>
+                    <div style="display:flex; gap:0.5rem; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:2px; font-family:var(--font-mono); font-size:0.75rem;">
                         <span id="charIn" style="color:var(--paper); font-weight:bold;">-</span>
                         <span style="color:var(--paper-dim);">↔</span>
                         <span id="charOut" style="color:var(--copper); font-weight:bold;">-</span>
                     </div>
                 </div>
-                <div style="padding:1rem; flex:1; display:flex; flex-direction:column; justify-content:center;">
-                    <div class="mapping-scroll" style="background:var(--bg); border:1px solid var(--border-strong); padding:1rem; border-radius:8px;">
-                        <div class="mapping-row" id="alfabetoTop" style="margin-bottom:0.75rem;"></div>
-                        <div class="mapping-row" id="alfabetoBottom"></div>
+                <div style="padding:1rem; display:flex; flex-direction:column; gap:1.1rem; height:calc(100% - 2.5rem); justify-content:center;">
+                    <div>
+                        <div class="field-label">Alfabeto Original (P)</div>
+                        <div id="alfabetoBaseDisplay" class="alphabet-strip"></div>
+                    </div>
+                    <div style="text-align:center; color:var(--copper); font-family:var(--font-mono); font-size:1rem; letter-spacing:0.3em;">
+                        ↕ Espejo
+                    </div>
+                    <div>
+                        <div class="field-label" style="color:var(--copper);">Alfabeto Cifrado (C)</div>
+                        <div id="alfabetoCifradoDisplay" class="alphabet-strip accent"></div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+                        <div class="metric-box">
+                            <span class="metric-label">Desplazamiento K</span>
+                            <span class="metric-value copper">Reverso</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Tamaño Alfabeto N</span>
+                            <span class="metric-value" id="metricN">26</span>
+                        </div>
                     </div>
                 </div>
             </div>

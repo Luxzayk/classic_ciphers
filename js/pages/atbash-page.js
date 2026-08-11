@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const customContainer = document.getElementById("customAlphabetContainer");
     const inputCustom = document.getElementById("alfabetoCustom");
 
-    const gridTop = document.getElementById("alfabetoTop");
-    const gridBottom = document.getElementById("alfabetoBottom");
+    const alfabetoBaseDisplay = document.getElementById("alfabetoBaseDisplay");
+    const alfabetoCifradoDisplay = document.getElementById("alfabetoCifradoDisplay");
     const charIn = document.getElementById("charIn");
     const charOut = document.getElementById("charOut");
 
@@ -48,37 +48,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const alfabeto = obtenerAlfabeto();
         const reflejo = obtenerReflejo(alfabeto);
 
-        gridTop.innerHTML = "";
-        gridBottom.innerHTML = "";
+        const metricN = document.getElementById("metricN");
+        if (metricN) {
+            metricN.textContent = alfabeto ? alfabeto.length : "0";
+        }
 
         if (!alfabeto) {
-            gridTop.innerHTML = '<div class="text-xs text-slate-500 px-2 py-1">Ingresa un alfabeto personalizado válido (mínimo 2 letras únicas).</div>';
-            gridBottom.innerHTML = "";
+            alfabetoBaseDisplay.textContent = "Ingresa un alfabeto personalizado válido (mínimo 2 letras únicas).";
+            alfabetoCifradoDisplay.textContent = "Esperando alfabeto...";
             charIn.textContent = "-";
             charOut.textContent = "-";
             return;
         }
 
-        for (let i = 0; i < alfabeto.length; i++) {
-            const baseCell = document.createElement("div");
-            baseCell.className = "letter-cell base-cell";
-            baseCell.textContent = alfabeto[i];
-            baseCell.dataset.char = alfabeto[i];
-            gridTop.appendChild(baseCell);
-
-            const cipherCell = document.createElement("div");
-            cipherCell.className = "letter-cell cipher-cell";
-            cipherCell.textContent = reflejo[i];
-            cipherCell.dataset.char = reflejo[i];
-            gridBottom.appendChild(cipherCell);
-        }
+        alfabetoBaseDisplay.textContent = alfabeto;
+        alfabetoCifradoDisplay.textContent = reflejo;
     }
 
     function resaltarCaracter(char) {
-        document.querySelectorAll(".active-base, .active-cipher").forEach(el => {
-            el.classList.remove("active-base", "active-cipher");
-        });
-
         if (!char) {
             charIn.textContent = "-";
             charOut.textContent = "-";
@@ -99,11 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const reflejo = obtenerReflejo(alfabeto);
         const salida = reflejo[index];
-        const baseCell = gridTop.children[index];
-        const cipherCell = gridBottom.children[index];
-
-        if (baseCell) baseCell.classList.add("active-base");
-        if (cipherCell) cipherCell.classList.add("active-cipher");
 
         charIn.textContent = upper;
         charOut.textContent = salida;
