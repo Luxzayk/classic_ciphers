@@ -25,6 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return selectIdioma.value === "EN" ? CesarCipher.ALFABETO_EN : CesarCipher.ALFABETO_ES;
     }
 
+    function renderizarAlfabetoSpans(elemento, texto) {
+        elemento.innerHTML = "";
+        for (let i = 0; i < texto.length; i++) {
+            const span = document.createElement("span");
+            span.textContent = texto[i];
+            span.dataset.char = texto[i];
+            elemento.appendChild(span);
+        }
+    }
+
     function actualizarAlfabetos() {
         const alfabeto = obtenerAlfabetoActual();
 
@@ -38,8 +48,32 @@ document.addEventListener("DOMContentLoaded", () => {
         const desplazamiento = Number(inputClave.value) % modulo;
         const alfabetoCifrado = alfabeto.slice(desplazamiento) + alfabeto.slice(0, desplazamiento);
 
-        alfabetoBaseDisplay.textContent = alfabeto;
-        alfabetoCifradoDisplay.textContent = alfabetoCifrado;
+        renderizarAlfabetoSpans(alfabetoBaseDisplay, alfabeto);
+        renderizarAlfabetoSpans(alfabetoCifradoDisplay, alfabetoCifrado);
+    }
+
+    function resaltarCaracter(char) {
+        alfabetoBaseDisplay.querySelectorAll("span").forEach(el => el.className = "");
+        alfabetoCifradoDisplay.querySelectorAll("span").forEach(el => el.className = "");
+
+        if (!char) return;
+
+        const upper = char.toUpperCase();
+        const alfabeto = obtenerAlfabetoActual();
+        if (!alfabeto) return;
+
+        const indexBase = alfabeto.indexOf(upper);
+        if (indexBase === -1) return;
+
+        const baseSpans = alfabetoBaseDisplay.querySelectorAll("span");
+        if (baseSpans[indexBase]) {
+            baseSpans[indexBase].className = "active-char-base";
+        }
+
+        const cipherSpans = alfabetoCifradoDisplay.querySelectorAll("span");
+        if (cipherSpans[indexBase]) {
+            cipherSpans[indexBase].className = "active-char-cipher";
+        }
     }
 
     function ejecutarAlgoritmo() {
@@ -54,23 +88,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
+            let ultimoChar = "";
             if (ultimoCampoEditado === "original") {
                 const texto = inputTexto.value;
                 if (!texto) {
                     outputTexto.value = "";
+                    resaltarCaracter("");
                     return;
                 }
                 const res = CesarCipher.procesar(texto, claveVal, "CIFRAR", idioma, alfabetoCustom);
                 outputTexto.value = res;
+                ultimoChar = texto.charAt(texto.length - 1);
             } else {
                 const texto = outputTexto.value;
                 if (!texto) {
                     inputTexto.value = "";
+                    resaltarCaracter("");
                     return;
                 }
                 const res = CesarCipher.procesar(texto, claveVal, "DESCIFRAR", idioma, alfabetoCustom);
                 inputTexto.value = res;
+                ultimoChar = inputTexto.value.charAt(inputTexto.value.length - 1);
             }
+            resaltarCaracter(ultimoChar);
         } catch (err) {
             CryptoUX.showToast("Error", err.message, "error");
         }

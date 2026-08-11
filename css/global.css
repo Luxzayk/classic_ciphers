@@ -469,3 +469,25 @@ input[type=range]:focus::-webkit-slider-thumb { background: var(--copper-dim); }
 .text-paper     { color: var(--paper) !important; }
 .text-paper-dim { color: var(--paper-dim) !important; }
 .font-display   { font-family: var(--font-display) !important; }
+
+/* Alphabet strip character highlighting */
+.alphabet-strip span {
+  display: inline-block;
+  transition: all 0.15s ease;
+  padding: 0 1px;
+}
+.alphabet-strip span.active-char-base {
+  background: rgba(244, 237, 224, 0.15);
+  color: var(--paper) !important;
+  font-weight: bold;
+  text-shadow: 0 0 4px var(--paper);
+  transform: scale(1.2) translateY(-1px);
+}
+.alphabet-strip span.active-char-cipher {
+  background: rgba(193, 113, 47, 0.25);
+  color: var(--copper) !important;
+  font-weight: bold;
+  text-shadow: 0 0 4px var(--copper);
+  transform: scale(1.2) translateY(1px);
+}
+
