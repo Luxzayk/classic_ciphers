@@ -1,5 +1,6 @@
 // js/pages/rot13-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const Rot13Cipher = window.CriptoSuite.Rot13Cipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById("textoEntrada");

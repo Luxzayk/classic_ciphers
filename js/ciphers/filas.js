@@ -1,3 +1,4 @@
+(function() {
 const FilasCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -184,3 +185,7 @@ const FilasCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.FilasCipher = FilasCipher;
+})();

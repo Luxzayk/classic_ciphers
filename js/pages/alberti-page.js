@@ -1,5 +1,6 @@
 // js/pages/alberti-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const AlbertiCipher = window.CriptoSuite.AlbertiCipher;
     // Referencias DOM - Entradas
     const inputTexto   = document.getElementById('textoEntrada');
     const outputTexto  = document.getElementById('textoSalida');

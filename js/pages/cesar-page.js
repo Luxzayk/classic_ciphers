@@ -1,5 +1,6 @@
 // js/pages/cesar-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const CesarCipher = window.CriptoSuite.CesarCipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById("textoEntrada");

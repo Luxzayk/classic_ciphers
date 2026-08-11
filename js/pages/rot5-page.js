@@ -1,5 +1,6 @@
 // js/pages/rot5-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const Rot5Cipher = window.CriptoSuite.Rot5Cipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById('textoEntrada');

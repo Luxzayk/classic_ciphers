@@ -1,3 +1,4 @@
+(function() {
 const AlbertiCipher = {
     ES_EXT: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ES_INT: "cdefghijklmnñopqrstuvwxyzab",
@@ -168,3 +169,7 @@ const AlbertiCipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.AlbertiCipher = AlbertiCipher;
+})();

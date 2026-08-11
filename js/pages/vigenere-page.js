@@ -1,5 +1,6 @@
 // js/pages/vigenere-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const VigenereCipher = window.CriptoSuite.VigenereCipher;
     let ultimoCampoEditado = "entrada";
     let ultimoToastClave = 0;
 

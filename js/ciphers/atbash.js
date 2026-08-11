@@ -1,3 +1,4 @@
+(function() {
 const AtbashCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -52,3 +53,7 @@ const AtbashCipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.AtbashCipher = AtbashCipher;
+})();

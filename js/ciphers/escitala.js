@@ -1,3 +1,4 @@
+(function() {
 const EscitalaCipher = {
     procesar: function(texto, columnas, operacion) {
         if (!texto || texto.trim().length === 0) {
@@ -47,17 +48,17 @@ const EscitalaCipher = {
             }
 
             let index = 0;
-            for (let c = 0; c < cols; c++) {
-                const filasEnEstaColumna = (c < columnasCompletas) ? filas : filas - 1;
-                for (let f = 0; f < filasEnEstaColumna; f++) {
+            for (let f = 0; f < filas; f++) {
+                const limiteColumnas = (f === filas - 1) ? columnasCompletas : cols;
+                for (let c = 0; c < limiteColumnas; c++) {
                     if (index < longitud) {
                         matriz[f][c] = txtLimpio.charAt(index++);
                     }
                 }
             }
 
-            for (let f = 0; f < filas; f++) {
-                for (let c = 0; c < cols; c++) {
+            for (let c = 0; c < cols; c++) {
+                for (let f = 0; f < filas; f++) {
                     if (matriz[f][c] !== '\u0000') {
                         resultado += matriz[f][c];
                     }
@@ -67,3 +68,7 @@ const EscitalaCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.EscitalaCipher = EscitalaCipher;
+})();

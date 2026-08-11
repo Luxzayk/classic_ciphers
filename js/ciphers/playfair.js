@@ -1,3 +1,4 @@
+(function() {
 const PlayfairCipher = {
     DEFAULT_ALPHABET: "ABCDEFGHIKLMNOPQRSTUVWXYZ",
 
@@ -174,3 +175,7 @@ const PlayfairCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.PlayfairCipher = PlayfairCipher;
+})();

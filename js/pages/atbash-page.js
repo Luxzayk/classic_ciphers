@@ -1,5 +1,6 @@
 // js/pages/atbash-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const AtbashCipher = window.CriptoSuite.AtbashCipher;
     let ultimoCampoEditado = "entrada";
 
     const inputTexto = document.getElementById("textoEntrada");

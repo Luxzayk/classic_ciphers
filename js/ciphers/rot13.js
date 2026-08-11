@@ -1,3 +1,4 @@
+(function() {
 const Rot13Cipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -43,3 +44,7 @@ const Rot13Cipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.Rot13Cipher = Rot13Cipher;
+})();

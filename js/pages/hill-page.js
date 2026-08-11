@@ -1,5 +1,6 @@
 // js/pages/hill-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const HillCipher = window.CriptoSuite.HillCipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById("textoEntrada");

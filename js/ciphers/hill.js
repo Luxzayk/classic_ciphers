@@ -1,3 +1,4 @@
+(function() {
 const HillCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -245,3 +246,7 @@ const HillCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.HillCipher = HillCipher;
+})();

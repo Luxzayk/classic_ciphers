@@ -1,3 +1,4 @@
+(function() {
 const PolybiosCipher = {
     ALFABETO_BASE: "ABCDEFGHIKLMNOPQRSTUVWXYZ",
 
@@ -65,3 +66,7 @@ const PolybiosCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.PolybiosCipher = PolybiosCipher;
+})();

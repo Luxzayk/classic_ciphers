@@ -1,3 +1,4 @@
+(function() {
 const Rot47Cipher = {
     procesar: function(texto) {
         if (!texto) return "";
@@ -15,3 +16,7 @@ const Rot47Cipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.Rot47Cipher = Rot47Cipher;
+})();

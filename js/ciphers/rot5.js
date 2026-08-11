@@ -1,3 +1,4 @@
+(function() {
 const Rot5Cipher = {
     DESPLAZAMIENTO: 5,
 
@@ -18,3 +19,7 @@ const Rot5Cipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.Rot5Cipher = Rot5Cipher;
+})();

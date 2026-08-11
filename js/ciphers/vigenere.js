@@ -1,3 +1,4 @@
+(function() {
 const VigenereCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -81,3 +82,7 @@ const VigenereCipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.VigenereCipher = VigenereCipher;
+})();

@@ -1,3 +1,4 @@
+(function() {
 const ColumnasCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -184,3 +185,7 @@ const ColumnasCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.ColumnasCipher = ColumnasCipher;
+})();

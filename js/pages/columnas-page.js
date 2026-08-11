@@ -1,5 +1,6 @@
 // js/pages/columnas-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const ColumnasCipher = window.CriptoSuite.ColumnasCipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById("textoEntrada");

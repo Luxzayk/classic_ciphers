@@ -1,5 +1,6 @@
 // js/pages/filas-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const FilasCipher = window.CriptoSuite.FilasCipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById("textoEntrada");

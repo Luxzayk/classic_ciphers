@@ -1,5 +1,6 @@
 // js/pages/grupos-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const GruposCipher = window.CriptoSuite.GruposCipher;
     // Referencias DOM - Entradas
     const inputTexto   = document.getElementById('textoEntrada');
     const outputTexto  = document.getElementById('textoSalida');

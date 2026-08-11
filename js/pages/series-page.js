@@ -1,5 +1,6 @@
 // js/pages/series-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const SeriesCipher = window.CriptoSuite.SeriesCipher;
     // Referencias DOM - Entradas
     const inputTexto   = document.getElementById('textoEntrada');
     const outputTexto  = document.getElementById('textoSalida');

@@ -1,3 +1,4 @@
+(function() {
 const SeriesCipher = {
     SeriesType: {
         PRIMOS: "PRIMOS",
@@ -245,3 +246,7 @@ const SeriesCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.SeriesCipher = SeriesCipher;
+})();

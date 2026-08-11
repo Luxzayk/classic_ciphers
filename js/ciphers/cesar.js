@@ -1,3 +1,4 @@
+(function() {
 const CesarCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -50,3 +51,7 @@ const CesarCipher = {
         return resultado;
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.CesarCipher = CesarCipher;
+})();

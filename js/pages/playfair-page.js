@@ -1,5 +1,6 @@
 // js/pages/playfair-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const PlayfairCipher = window.CriptoSuite.PlayfairCipher;
     let ultimoCampoEditado = "original";
 
     const inputTexto = document.getElementById("textoEntrada");

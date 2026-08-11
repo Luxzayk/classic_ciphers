@@ -1,5 +1,6 @@
 // js/pages/escitala-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const EscitalaCipher = window.CriptoSuite.EscitalaCipher;
     // Referencias DOM
     const inputTexto  = document.getElementById('textoEntrada');
     const outputTexto = document.getElementById('textoSalida');

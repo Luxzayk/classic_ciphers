@@ -1,5 +1,6 @@
 // js/pages/polybios-page.js
 document.addEventListener("DOMContentLoaded", () => {
+    const PolybiosCipher = window.CriptoSuite.PolybiosCipher;
     const inputTexto = document.getElementById("textoEntrada");
     const outputTexto = document.getElementById("textoSalida");
     const radiosOperacion = document.querySelectorAll('input[name="operacion"]');

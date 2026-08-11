@@ -1,3 +1,4 @@
+(function() {
 const GruposCipher = {
     ALFABETO_ES: "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
     ALFABETO_EN: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -151,3 +152,7 @@ const GruposCipher = {
         }
     }
 };
+
+window.CriptoSuite = window.CriptoSuite || {};
+window.CriptoSuite.GruposCipher = GruposCipher;
+})();
