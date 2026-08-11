@@ -64,17 +64,28 @@
 
             <!-- CENTER: VISUALIZER -->
             <div class="workspace-panel">
-                <div class="panel-header copper">Mapeo de Símbolos ASCII</div>
-                <div style="padding:1rem; display:flex; flex-direction:column; gap:1.5rem; justify-content:center; height:100%;">
+                <div class="panel-header copper">Mapeo de Alfabetos</div>
+                <div style="padding:1rem; display:flex; flex-direction:column; gap:1.1rem; height:calc(100% - 2.5rem); justify-content:center;">
                     <div>
-                        <label class="field-label" style="margin-bottom:0.5rem; display:block;">Original (Muestra ASCII)</label>
-                        <div class="value-display" style="word-break:break-all; font-family:var(--font-mono); letter-spacing:0.1em; padding:0.75rem;">! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ;
-                            <=> ? @ A B C D E F G H I</div>
+                        <div class="field-label">Alfabeto Original (P)</div>
+                        <div id="alfabetoBaseDisplay" class="alphabet-strip">! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; &lt; = &gt; ? @ A B C D E F G H I</div>
                     </div>
-                    <div style="text-align:center; color:var(--copper); opacity:0.8;">↓</div>
+                    <div style="text-align:center; color:var(--copper); font-family:var(--font-mono); font-size:1rem; letter-spacing:0.3em;">
+                        ↓ + 47
+                    </div>
                     <div>
-                        <label class="field-label" style="margin-bottom:0.5rem; display:block; color:var(--copper);">Desplazado (Resultado ROT-47)</label>
-                        <div class="value-display" style="word-break:break-all; font-family:var(--font-mono); letter-spacing:0.1em; padding:0.75rem; border-color:var(--copper); color:var(--copper);">P Q R S T U V W X Y Z [ \ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | }</div>
+                        <div class="field-label" style="color:var(--copper);">Alfabeto Cifrado (C)</div>
+                        <div id="alfabetoCifradoDisplay" class="alphabet-strip accent">P Q R S T U V W X Y Z [ \ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | }</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+                        <div class="metric-box">
+                            <span class="metric-label">Desplazamiento K</span>
+                            <span class="metric-value copper" id="metricK">47</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Tamaño Alfabeto N</span>
+                            <span class="metric-value" id="metricN">94</span>
+                        </div>
                     </div>
                 </div>
             </div>

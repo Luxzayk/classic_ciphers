@@ -37,6 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alfabetoBaseDisplay.textContent = alfabeto;
         alfabetoCifradoDisplay.textContent = alfabetoCifrado;
+
+        const metricN = document.getElementById("metricN");
+        if (metricN) {
+            metricN.textContent = alfabeto.length;
+        }
     }
 
     function ejecutarAlgoritmo() {

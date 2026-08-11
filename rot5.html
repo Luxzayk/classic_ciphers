@@ -64,16 +64,28 @@
 
             <!-- CENTER: VISUALIZER -->
             <div class="workspace-panel">
-                <div class="panel-header copper">Mapeo de Dígitos</div>
-                <div style="padding:1rem; display:flex; flex-direction:column; gap:1.5rem; justify-content:center; height:100%;">
+                <div class="panel-header copper">Mapeo de Alfabetos</div>
+                <div style="padding:1rem; display:flex; flex-direction:column; gap:1.1rem; height:calc(100% - 2.5rem); justify-content:center;">
                     <div>
-                        <label class="field-label" style="margin-bottom:0.5rem; display:block;">Dígito Original</label>
-                        <div id="alfabetoBaseDisplay" class="value-display" style="text-align:center; font-family:var(--font-mono); letter-spacing:0.3em; padding:0.75rem;">0123456789</div>
+                        <div class="field-label">Alfabeto Original (P)</div>
+                        <div id="alfabetoBaseDisplay" class="alphabet-strip">0123456789</div>
                     </div>
-                    <div style="text-align:center; color:var(--copper); opacity:0.8;">↓</div>
+                    <div style="text-align:center; color:var(--copper); font-family:var(--font-mono); font-size:1rem; letter-spacing:0.3em;">
+                        ↓ + 5
+                    </div>
                     <div>
-                        <label class="field-label" style="margin-bottom:0.5rem; display:block; color:var(--copper);">Dígito Cifrado</label>
-                        <div id="alfabetoCifradoDisplay" class="value-display" style="text-align:center; font-family:var(--font-mono); letter-spacing:0.3em; padding:0.75rem; border-color:var(--copper); color:var(--copper);">5678901234</div>
+                        <div class="field-label" style="color:var(--copper);">Alfabeto Cifrado (C)</div>
+                        <div id="alfabetoCifradoDisplay" class="alphabet-strip accent">5678901234</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.5rem;">
+                        <div class="metric-box">
+                            <span class="metric-label">Desplazamiento K</span>
+                            <span class="metric-value copper" id="metricK">5</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Tamaño Alfabeto N</span>
+                            <span class="metric-value" id="metricN">10</span>
+                        </div>
                     </div>
                 </div>
             </div>
