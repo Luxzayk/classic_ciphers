@@ -44,6 +44,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return alfabeto.split("").reverse().join("");
     }
 
+    function renderizarAlfabetoSpans(elemento, texto) {
+        elemento.innerHTML = "";
+        for (let i = 0; i < texto.length; i++) {
+            const span = document.createElement("span");
+            span.textContent = texto[i];
+            span.dataset.char = texto[i];
+            elemento.appendChild(span);
+        }
+    }
+
     function actualizarMapa() {
         const alfabeto = obtenerAlfabeto();
         const reflejo = obtenerReflejo(alfabeto);
@@ -61,11 +71,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        alfabetoBaseDisplay.textContent = alfabeto;
-        alfabetoCifradoDisplay.textContent = reflejo;
+        renderizarAlfabetoSpans(alfabetoBaseDisplay, alfabeto);
+        renderizarAlfabetoSpans(alfabetoCifradoDisplay, reflejo);
     }
 
     function resaltarCaracter(char) {
+        alfabetoBaseDisplay.querySelectorAll("span").forEach(el => el.className = "");
+        alfabetoCifradoDisplay.querySelectorAll("span").forEach(el => el.className = "");
+
         if (!char) {
             charIn.textContent = "-";
             charOut.textContent = "-";
@@ -86,6 +99,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const reflejo = obtenerReflejo(alfabeto);
         const salida = reflejo[index];
+
+        const baseSpans = alfabetoBaseDisplay.querySelectorAll("span");
+        if (baseSpans[index]) {
+            baseSpans[index].className = "active-char-base";
+        }
+
+        const cipherSpans = alfabetoCifradoDisplay.querySelectorAll("span");
+        if (cipherSpans[index]) {
+            cipherSpans[index].className = "active-char-cipher";
+        }
 
         charIn.textContent = upper;
         charOut.textContent = salida;
