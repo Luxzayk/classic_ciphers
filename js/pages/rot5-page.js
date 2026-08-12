@@ -155,6 +155,163 @@ document.addEventListener("DOMContentLoaded", () => {
         inputTexto.focus();
     });
 
+    // ==========================================
+    // TUTORIAL INTERACTIVO
+    // ==========================================
+    const tutorialData = [
+        { element: "#panelParametros", title: "Parámetros de Rotación", text: "ROT-5 aplica una rotación numérica fija de 5 posiciones exclusivamente sobre el rango de dígitos (del 0 al 9)." },
+        { element: "#panelSimulador", title: "Mapeo de Dígitos", text: "Aquí se muestran las tiras de alineamiento. La tira superior es el alfabeto original (P) y la inferior el cifrado (C). Al tipear números, el visualizador destacará la transformación de forma instantánea." },
+        { element: "#panelEntrada", title: "Texto Original", text: "Ingresa el texto a procesar. Recuerda que las letras y caracteres especiales se ignorarán y pasarán directamente sin cambios; solo los dígitos 0-9 serán transformados." },
+        { element: "#panelSalida", title: "Texto Cifrado", text: "Aquí verás los números cifrados. ROT-5 es involutivo (su propia función inversa), por lo que puedes ingresar texto cifrado aquí para obtener el original de forma reactiva." }
+    ];
+
+    let currentStep = 0;
+    let activeTarget = null;
+    let animationFrameId = null;
+
+    const overlay = document.getElementById("tutorialOverlay");
+    const bubble = document.getElementById("tutorialBubble");
+    const tutTitle = document.getElementById("tutTitle");
+    const tutText = document.getElementById("tutText");
+    const btnTutNext = document.getElementById("btnTutNext");
+    const btnTutPrev = document.getElementById("btnTutPrev");
+    const tutDotsContainer = document.getElementById("tutDots");
+
+    if (tutDotsContainer) {
+        tutDotsContainer.innerHTML = "";
+        tutorialData.forEach(() => {
+            const span = document.createElement("span");
+            span.className = "w-2 h-2 rounded-full bg-slate-700";
+            tutDotsContainer.appendChild(span);
+        });
+    }
+
+    function stopTracking() {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        activeTarget = null;
+    }
+
+    function updateBubblePosition() {
+        if (!activeTarget || !bubble) return;
+        const rect = activeTarget.getBoundingClientRect();
+        const bubbleRect = bubble.getBoundingClientRect();
+
+        let top = rect.bottom + 15;
+        let left = rect.left + (rect.width / 2) - (bubbleRect.width / 2);
+
+        const padding = 15;
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        if (left < padding) left = padding;
+        if (left + bubbleRect.width > screenWidth - padding) {
+            left = screenWidth - bubbleRect.width - padding;
+        }
+
+        if (top + bubbleRect.height > screenHeight - padding) {
+            top = rect.top - bubbleRect.height - 15;
+        }
+        if (top < padding) {
+            top = padding;
+        }
+
+        bubble.style.top = `${top}px`;
+        bubble.style.left = `${left}px`;
+
+        animationFrameId = requestAnimationFrame(updateBubblePosition);
+    }
+
+    function moverBurbuja(selector) {
+        stopTracking();
+        document.querySelectorAll(".tutorial-focus").forEach(el => el.classList.remove("tutorial-focus"));
+        const target = document.querySelector(selector);
+        if (!target) return;
+        target.classList.add("tutorial-focus");
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        setTimeout(() => {
+            activeTarget = target;
+            if (bubble) {
+                bubble.classList.remove("hidden");
+                updateBubblePosition();
+                bubble.classList.remove("opacity-0", "scale-95");
+            }
+        }, 300);
+    }
+
+    function updateTutorial() {
+        if (!bubble) return;
+        bubble.classList.add("opacity-0", "scale-95");
+        setTimeout(() => {
+            if (tutTitle) tutTitle.innerHTML = tutorialData[currentStep].title;
+            if (tutText) tutText.innerHTML = tutorialData[currentStep].text;
+
+            if (tutDotsContainer) {
+                Array.from(tutDotsContainer.children).forEach((dot, i) => {
+                    dot.className = i === currentStep
+                        ? "w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee] transition-all"
+                        : "w-2 h-2 rounded-full bg-slate-700 transition-all";
+                });
+            }
+
+            if (btnTutPrev) btnTutPrev.classList.toggle("hidden", currentStep === 0);
+            
+            if (btnTutNext) {
+                if (currentStep === tutorialData.length - 1) {
+                    btnTutNext.innerHTML = "Terminar ✓";
+                } else {
+                    btnTutNext.innerHTML = "Siguiente →";
+                }
+            }
+
+            moverBurbuja(tutorialData[currentStep].element);
+        }, 200);
+    }
+
+    const btnTutorial = document.getElementById("btnTutorial");
+    if (btnTutorial) {
+        btnTutorial.addEventListener("click", () => {
+            currentStep = 0;
+            if (overlay) {
+                overlay.classList.remove("hidden");
+                setTimeout(() => overlay.classList.remove("opacity-0"), 10);
+            }
+            updateTutorial();
+        });
+    }
+
+    function closeTutorial() {
+        stopTracking();
+        document.querySelectorAll(".tutorial-focus").forEach(el => el.classList.remove("tutorial-focus"));
+        if (bubble) bubble.classList.add("opacity-0", "scale-95");
+        if (overlay) overlay.classList.add("opacity-0");
+        setTimeout(() => {
+            if (bubble) bubble.classList.add("hidden");
+            if (overlay) overlay.classList.add("hidden");
+        }, 300);
+    }
+
+    const btnCerrarTutorial = document.getElementById("btnCerrarTutorial");
+    if (btnCerrarTutorial) btnCerrarTutorial.addEventListener("click", closeTutorial);
+    
+    if (btnTutNext) {
+        btnTutNext.addEventListener("click", () => {
+            currentStep < tutorialData.length - 1 ? (currentStep++, updateTutorial()) : closeTutorial();
+        });
+    }
+    
+    if (btnTutPrev) {
+        btnTutPrev.addEventListener("click", () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateTutorial();
+            }
+        });
+    }
+
     // Inicializar displays de dígitos troceados en spans
     inicializarDisplays();
 });
