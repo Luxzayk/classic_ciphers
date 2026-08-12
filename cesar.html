@@ -12,6 +12,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
+    <style>
+        .tutorial-focus {
+            position: relative;
+            z-index: 20;
+            box-shadow: 0 0 0 4px rgba(193, 113, 47, 0.5), 0 0 35px rgba(193, 113, 47, 0.4);
+            border-radius: 2px;
+            transition: all .3s ease;
+        }
+    </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 
@@ -47,7 +56,7 @@
         <div class="workspace-grid">
 
             <!-- LEFT: PARAMS -->
-            <div class="workspace-panel">
+            <div id="panelParametros" class="workspace-panel">
                 <div class="panel-header copper">Parámetros</div>
 
                 <form id="cesarForm" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1.1rem;">
@@ -90,7 +99,7 @@
             </div>
 
             <!-- CENTER: VISUALIZER -->
-            <div class="workspace-panel">
+            <div id="panelSimulador" class="workspace-panel">
                 <div class="panel-header copper">Mapeo de Alfabetos</div>
 
                 <div style="display:flex; flex-direction:column; gap:1.1rem; height:calc(100% - 2.5rem); justify-content:center;">
@@ -124,7 +133,7 @@
             <!-- RIGHT: WORK -->
             <div class="workspace-right">
 
-                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                <div id="panelEntrada" class="workspace-panel" style="display:flex; flex-direction:column;">
                     <div class="panel-header">
                         <span>Texto Original</span>
                         <div style="display:flex; gap:0.35rem;">
@@ -135,7 +144,7 @@
                     <textarea id="textoEntrada" class="cipher-input" style="flex:1; min-height:130px;" placeholder="Escribe el texto a cifrar...&#10;Ej: HOLA MUNDO"></textarea>
                 </div>
 
-                <div class="workspace-panel" style="display:flex; flex-direction:column;">
+                <div id="panelSalida" class="workspace-panel" style="display:flex; flex-direction:column;">
                     <div class="panel-header copper">
                         <span>Texto Cifrado</span>
                         <button id="btnCopiar" class="btn-primary">Copiar</button>
@@ -153,6 +162,35 @@
         <span class="fn-dot">·</span>
         <a href="rot5">ROT-5 →</a>
         <span class="fn-dot" style="margin-left:auto; font-size:0.55rem;">Sustitución · 1 / 6</span>
+    </div>
+
+    <!-- TUTORIAL -->
+    <button id="btnTutorial" title="Tutorial interactivo" class="fixed bottom-6 right-6 z-40 bg-[var(--copper)] hover:opacity-80 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer border border-white/20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </button>
+
+    <div id="tutorialOverlay" class="fixed inset-0 bg-transparent pointer-events-none z-40 hidden transition-opacity duration-300"></div>
+
+    <div id="tutorialBubble" class="fixed z-50 w-80 bg-[var(--bg-elevated)] border border-[var(--copper)] rounded-xl shadow-2xl transform transition-all duration-400 opacity-0 scale-95 hidden flex-col pointer-events-auto overflow-hidden">
+        <div class="border-b border-white/10 p-3 flex justify-between items-center bg-black/20">
+            <div class="flex items-center gap-2 text-[var(--copper)] font-bold uppercase tracking-wider text-[10px]">
+                <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Entrenamiento · César
+            </div>
+            <button id="btnCerrarTutorial" class="text-[var(--paper-dim)] hover:text-white p-1 rounded-lg transition cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="p-5">
+            <h3 id="tutTitle" class="text-base font-bold text-[var(--paper)] mb-1.5">Título</h3>
+            <p id="tutText" class="text-[var(--paper-dim)] text-sm leading-relaxed">Texto informativo</p>
+        </div>
+        <div class="bg-black/40 px-4 py-3 border-t border-white/10 flex justify-between items-center gap-2">
+            <div class="flex gap-1.5" id="tutDots"></div>
+            <div class="flex gap-2">
+                <button id="btnTutPrev" class="hidden px-3 py-1.5 text-[11px] font-bold text-[var(--paper-dim)] hover:text-white uppercase transition cursor-pointer rounded-lg hover:bg-white/10">← Atrás</button>
+                <button id="btnTutNext" class="px-4 py-1.5 bg-[var(--copper)] hover:opacity-80 text-white text-[11px] font-bold rounded-lg uppercase shadow-lg transition cursor-pointer">Siguiente →</button>
+            </div>
+        </div>
     </div>
 
     <script src="js/ciphers/cesar.js"></script>
